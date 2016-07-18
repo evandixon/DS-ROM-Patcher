@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>DSPatcher</id>
+    <version>$version$</version>
+    <title>DS ROM Patcher</title>
+    <authors>evandixon</authors>
+    <owners>evandixon</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Applies patches to NDS and 3DS ROMs for use with ROM hacks.</description>
+    <copyright>Copyright 2016</copyright>
+  </metadata>
+</package>
