@@ -1,11 +1,26 @@
 ﻿Imports System.Web.Script.Serialization
 
 Public Class ModFile
+    Public Sub New(Filename As String)
+        Dim j As New JavaScriptSerializer
+        Me.ModDetails = j.Deserialize(Of ModJson)(IO.File.ReadAllText(Filename))
+        Me.Name = Me.ModDetails.Name
+        Me.Patched = False
+        Me.Filename = Filename
+
+        'Load patchers.json
+        Dim patchersPath = IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Tools", "patchers.json")
+        If IO.File.Exists(patchersPath) Then
+            Me.ModLevelPatchers = j.Deserialize(Of List(Of FilePatcher))(IO.File.ReadAllText(patchersPath))
+        End If
+    End Sub
+
     Public Property ModDetails As ModJson
     Public Property Name As String
     Public Property Patched As Boolean
     Public Property Filename As String
     Public Property ModLevelPatchers As List(Of FilePatcher)
+
     Public Async Function ApplyPatch(currentDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
         Dim renameTemp = IO.Path.Combine(currentDirectory, "Tools", "renametemp")
         If ModDetails.ToAdd IsNot Nothing Then
@@ -49,13 +64,13 @@ Public Class ModFile
 
                             Await ProcessHelper.RunProgram(IO.Path.Combine(path, possiblePatchers(0).ApplyPatchProgram), String.Format(possiblePatchers(0).ApplyPatchArguments, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), patchFile, tempFilename))
 
-                                If Not IO.File.Exists(tempFilename) Then
-                                    MessageBox.Show("Unable to patch file """ & file & """.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")
-                                Else
-                                    IO.File.Copy(tempFilename, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), True)
-                                    IO.File.Delete(tempFilename)
-                                End If
+                            If Not IO.File.Exists(tempFilename) Then
+                                MessageBox.Show("Unable to patch file """ & file & """.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")
+                            Else
+                                IO.File.Copy(tempFilename, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), True)
+                                IO.File.Delete(tempFilename)
                             End If
+                        End If
                     Next
                 End If
             Next
@@ -115,18 +130,7 @@ Public Class ModFile
             End If
         End If
     End Function
-    Public Sub New(Filename As String)
-        Dim j As New JavaScriptSerializer
-        Me.ModDetails = j.Deserialize(Of ModJson)(IO.File.ReadAllText(Filename))
-        Me.Name = Me.ModDetails.Name
-        Me.Patched = False
-        Me.Filename = Filename
-        'Todo: load patchers.json
-        Dim patchersPath = IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Tools", "patchers.json")
-        If IO.File.Exists(patchersPath) Then
-            Me.ModLevelPatchers = j.Deserialize(Of List(Of FilePatcher))(IO.File.ReadAllText(patchersPath))
-        End If
-    End Sub
+
     Public Shared Sub CopyFile(OriginalFilename As String, NewFilename As String, Overwrite As Boolean)
         If Not IO.Directory.Exists(IO.Path.GetDirectoryName(NewFilename)) Then
             IO.Directory.CreateDirectory(IO.Path.GetDirectoryName(NewFilename))

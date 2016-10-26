@@ -33,5 +33,6 @@
     ''' <param name="ModToCheck"></param>
     ''' <returns></returns>
     Public MustOverride Function SupportsMod(ModToCheck As ModJson) As Boolean
+
     Public MustOverride Function RunPatch(Mods As IEnumerable(Of ModJson), Optional DestinationPath As String = Nothing) As Task
 End Class
