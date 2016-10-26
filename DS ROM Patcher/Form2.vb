@@ -4,19 +4,11 @@ Imports System.Web.Script.Serialization
 Imports ICSharpCode.SharpZipLib.Zip
 
 Public Class Form2
-    Private Property is3dsMode As Boolean
     Private WithEvents core As PatcherCore
     Private Property Mods As List(Of ModJson)
     Private Async Sub Form2_Load(sender As Object, e As EventArgs) Handles Me.Load
-        If IO.File.Exists("Tools/ctrtool.exe") Then
-            is3dsMode = True
-            Me.Text = String.Format("{0} Patcher v{1}", "3DS", Assembly.GetExecutingAssembly.GetName.Version.ToString)
-            core = New ThreeDSPatcherCore
-        Else
-            is3dsMode = False
-            Me.Text = String.Format("{0} Patcher v{1}", "NDS", Assembly.GetExecutingAssembly.GetName.Version.ToString)
-            core = New NDSPatcherCore
-        End If
+        Me.Text = String.Format("{0} Patcher v{1}", "DS", Assembly.GetExecutingAssembly.GetName.Version.ToString)
+        core = New NDSand3DSCore
 
         'Unpack Mods
         Dim currentDirectory = Environment.CurrentDirectory
@@ -67,6 +59,7 @@ Public Class Form2
 
         lblStatus.Text = "Ready"
 
+        'Auto-patch
         Dim args = Environment.GetCommandLineArgs
         If args.Count > 2 Then
             btnBrowse.Enabled = False
@@ -91,7 +84,9 @@ Public Class Form2
     Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
         core.PromptFilePath()
         txtInput.Text = core.SelectedFilename
+
         'Display supported mods
+        chbMods.Items.Clear()
         For Each item In Mods
             If core.SupportsMod(item) Then
                 chbMods.Items.Add(item, True)

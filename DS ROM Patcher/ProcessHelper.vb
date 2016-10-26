@@ -8,22 +8,22 @@
     ''' <remarks></remarks>
     Public Shared Async Function RunProgram(Filename As String, Arguments As String, Optional IsVisible As Boolean = False) As Task
         'WriteLine(String.Format("Executing {0} {1}", Filename, Arguments))
-        Dim p As New Process()
-        p.StartInfo.FileName = Filename
-        p.StartInfo.Arguments = Arguments
-        p.StartInfo.RedirectStandardOutput = True
-        p.StartInfo.UseShellExecute = False
-        If IsVisible Then
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Normal
-        Else
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
-        End If
-        p.StartInfo.CreateNoWindow = True
-        p.StartInfo.WorkingDirectory = IO.Path.GetDirectoryName(Filename)
-        p.Start()
-        p.BeginOutputReadLine()
-        Await WaitForProcess(p)
-        p.Dispose()
+        Using p As New Process()
+            p.StartInfo.FileName = Filename
+            p.StartInfo.Arguments = Arguments
+            p.StartInfo.RedirectStandardOutput = True
+            p.StartInfo.UseShellExecute = False
+            If IsVisible Then
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Normal
+            Else
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden
+            End If
+            p.StartInfo.CreateNoWindow = True
+            p.StartInfo.WorkingDirectory = IO.Path.GetDirectoryName(Filename)
+            p.Start()
+            p.BeginOutputReadLine()
+            Await WaitForProcess(p)
+        End Using
         ' WriteLine(String.Format("""{0}"" finished running.", p.StartInfo.FileName))
     End Function
     Public Shared Async Function RunCTRTool(Arguments) As Task

@@ -5,15 +5,17 @@
         Inherits EventArgs
         Public Property Progress As Single
         Public Property Message As String
+        Public Property IsIndeterminate As Boolean
     End Class
     Public Event ProgressChanged(sender As Object, e As ProgressChangedEventArgs)
     Protected Sub RaiseProgressChanged(sender As Object, e As ProgressChangedEventArgs)
         RaiseEvent ProgressChanged(sender, e)
     End Sub
-    Protected Sub RaiseProgressChanged(Progress As Single, Message As String)
+    Protected Sub RaiseProgressChanged(Progress As Single, Message As String, Optional isIndeterminate As Boolean = False)
         Dim e As New ProgressChangedEventArgs
         e.Progress = Progress
         e.Message = Message
+        e.IsIndeterminate = isIndeterminate
         RaiseProgressChanged(Me, e)
     End Sub
 #End Region
