@@ -88,44 +88,51 @@ Public Class NDSand3DSCore
             End If
 
             RaiseProgressChanged(2 / 3, "Repacking the ROM...", True)
-            If Not isHansMode AndAlso Not isDirectoryMode AndAlso Not sourceExt = ".nds" AndAlso Not sourceExt = ".srl" Then
+            If Not isHansMode AndAlso String.IsNullOrEmpty(DestinationPath) AndAlso Not sourceExt = ".nds" AndAlso Not sourceExt = ".srl" Then
                 If MessageBox.Show("Would you like to output to HANS?  (Say no to output to .3DS or .CIA)", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.Yes Then
                     isHansMode = True
                 End If
             End If
 
             If isHansMode OrElse sourceExt = ".cxi" Then
-                Dim d As New FolderBrowserDialog
-                d.Description = "Please select the root of your SD card."
+                If String.IsNullOrEmpty(DestinationPath) Then
+                    Dim d As New FolderBrowserDialog
+                    d.Description = "Please select the root of your SD card."
 ShowFolderDialog3DS: If d.ShowDialog = DialogResult.OK Then
-                    Await c.BuildHans(ROMDirectory, d.SelectedPath, info.ShortName)
-                Else
-                    If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
-                        GoTo ShowFolderDialog3DS
-                    End If
-                End If
-            Else
-ShowSaveDialogNDS: Dim s As New SaveFileDialog
-                Select Case sourceExt
-                    Case ".nds", ".srl"
-                        s.Filter = "NDS ROMs|*.nds;*.srl|All Files|*.*"
-                    Case ".3ds", ".cia"
-                        s.Filter = "3DS ROMs|*.3ds;*.3dz;*.cci|CIA Files|*.cia|All Files|*.*"
-                        If sourceExt = ".cia" Then
-                            s.FilterIndex = 1
+                        DestinationPath = d.SelectedPath
+                    Else
+                        If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
+                            GoTo ShowFolderDialog3DS
                         End If
-                    Case Else
-                        s.Filter = "All Files|*.*"
-                End Select
-
-                If s.ShowDialog = DialogResult.OK Then
-                    'Todo: watch progress changed event
-                    Await c.BuildAuto(ROMDirectory, s.FileName)
-                Else
-                    If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
-                        GoTo ShowSaveDialogNDS
                     End If
                 End If
+
+                Await c.BuildHans(ROMDirectory, DestinationPath, info.ShortName)
+            Else
+                If String.IsNullOrEmpty(DestinationPath) Then
+ShowSaveDialogNDS:  Dim s As New SaveFileDialog
+                    Select Case sourceExt
+                        Case ".nds", ".srl"
+                            s.Filter = "NDS ROMs|*.nds;*.srl|All Files|*.*"
+                        Case ".3ds", ".cia"
+                            s.Filter = "3DS ROMs|*.3ds;*.3dz;*.cci|CIA Files|*.cia|All Files|*.*"
+                            If sourceExt = ".cia" Then
+                                s.FilterIndex = 1
+                            End If
+                        Case Else
+                            s.Filter = "All Files|*.*"
+                    End Select
+                    If s.ShowDialog = DialogResult.OK Then
+                        DestinationPath = s.FileName
+                    Else
+                        If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
+                            GoTo ShowSaveDialogNDS
+                        End If
+                    End If
+                End If
+
+                'Todo: watch progress changed event
+                Await c.BuildAuto(ROMDirectory, DestinationPath)
             End If
             RaiseProgressChanged(1, "Ready")
 
