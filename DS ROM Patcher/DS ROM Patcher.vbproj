@@ -150,6 +150,7 @@
     <Compile Include="NDSand3DSCore.vb" />
     <Compile Include="PatcherCore.vb" />
     <Compile Include="ProcessHelper.vb" />
+    <Compile Include="xdelta.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Form2.resx">
@@ -183,6 +184,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\xdelta3.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

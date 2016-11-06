@@ -1,4 +1,5 @@
-﻿Imports System.Security.Cryptography
+﻿Imports System.IO
+Imports System.Security.Cryptography
 Imports System.Text.RegularExpressions
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
@@ -132,11 +133,17 @@ Public Class ModBuilder
     Public Async Function DoBuild(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IOProvider) As Task
         IsBuildComplete = False
 
-        Dim modTempFiles = IO.Path.Combine(ModTempDir, "Files")
-        Dim modTempTools = IO.Path.Combine(ModTempDir, "Tools")
+        Dim modTempFiles = Path.Combine(ModTempDir, "Files")
+        Dim modTempTools = Path.Combine(ModTempDir, "Tools")
 
         Dim patchers As New List(Of FilePatcher)
         Dim actions As New ModJson
+        actions.DependenciesBefore = ModDependenciesBefore
+        actions.DependenciesAfter = ModDependenciesAfter
+        actions.Name = ModName
+        actions.Author = ModAuthor
+        actions.Description = ModDescription
+        actions.UpdateUrl = Homepage
 
         Await Task.Run(Async Function() As Task
                            Me.BuildProgress = 0
@@ -144,13 +151,13 @@ Public Class ModBuilder
                            'Create the mod
                            '-Find all the files
                            Dim sourceFiles As New Dictionary(Of String, Byte())
-                           For Each file In IO.Directory.GetFiles(originalDirectory, "*", IO.SearchOption.AllDirectories)
+                           For Each file In Directory.GetFiles(originalDirectory, "*", SearchOption.AllDirectories)
                                sourceFiles.Add(file.Replace(originalDirectory, "").ToLower, {})
                            Next
 
 
                            Dim destFiles As New Dictionary(Of String, Byte())
-                           For Each file In IO.Directory.GetFiles(modifiedDirectory, "*", IO.SearchOption.AllDirectories)
+                           For Each file In Directory.GetFiles(modifiedDirectory, "*", SearchOption.AllDirectories)
                                Dim part = file.Replace(modifiedDirectory, "").ToLower
                                If Not file.ToLower.EndsWith(".skyproj") AndAlso Not part.StartsWith("\output") AndAlso Not part.StartsWith("\mod files") Then 'In case the raw files are stored in the project root
                                    destFiles.Add(part, {})
@@ -182,7 +189,7 @@ Public Class ModBuilder
                                tasks.Add(Task.Run(New Action(Sub()
                                                                  Using h = MD5.Create
                                                                      Me.BuildProgress = completed / (hashToCalcSource.Count + hashToCalcDest.Count)
-                                                                     Using source = IO.File.OpenRead(IO.Path.Combine(originalDirectory, hashToCalcSource(c).TrimStart("\")))
+                                                                     Using source = File.OpenRead(Path.Combine(originalDirectory, hashToCalcSource(c).TrimStart("\")))
                                                                          sourceFiles(hashToCalcSource(c)) = h.ComputeHash(source)
                                                                      End Using
                                                                      completed += 1
@@ -195,7 +202,7 @@ Public Class ModBuilder
                                tasks.Add(Task.Run(New Action(Sub()
                                                                  Using h = MD5.Create
                                                                      Me.BuildProgress = completed / (hashToCalcSource.Count + hashToCalcDest.Count)
-                                                                     Using dest = IO.File.OpenRead(IO.Path.Combine(modifiedDirectory, hashToCalcDest(c).TrimStart("\")))
+                                                                     Using dest = File.OpenRead(Path.Combine(modifiedDirectory, hashToCalcDest(c).TrimStart("\")))
                                                                          destFiles(hashToCalcDest(c)) = h.ComputeHash(dest)
                                                                      End Using
                                                                      completed += 1
@@ -204,8 +211,6 @@ Public Class ModBuilder
                            Next
 
                            Await Task.WhenAll(tasks)
-
-
 
                            Me.BuildProgress = 0
                            Me.BuildStatusMessage = My.Resources.Language.LoadingComparingFiles
@@ -248,14 +253,6 @@ Public Class ModBuilder
                            End If
                        End Function)
 
-
-        actions.DependenciesBefore = modDependenciesBefore
-        actions.DependenciesAfter = modDependenciesAfter
-        actions.Name = modName
-        actions.Author = modAuthor
-        actions.Description = modDescription
-        actions.UpdateUrl = homepage
-
         '-Copy and write files
         Await FileSystem.ReCreateDirectory(ModTempDir, provider)
 
@@ -264,88 +261,98 @@ Public Class ModBuilder
         Me.BuildProgress = 0
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
 
-        '--Add files that were added
+        '-- Add files that were added
         For Each item In actions.ToAdd
-            Dim fileName = IO.Path.Combine(modifiedDirectory, item.TrimStart("\"))
-            'Todo: remove item from toAdd if no longer exists
-            If IO.File.Exists(fileName) Then
-                If Not IO.Directory.Exists(IO.Path.GetDirectoryName(IO.Path.Combine(modTempFiles, item.TrimStart("\")))) Then
-                    IO.Directory.CreateDirectory(IO.Path.GetDirectoryName(IO.Path.Combine(modTempFiles, item.TrimStart("\"))))
-                End If
-                IO.File.Copy(fileName, IO.Path.Combine(modTempFiles, item.TrimStart("\")), True)
+            Dim itemTrimmed = item.Trim("\")
+            Dim fileName = IO.Path.Combine(modifiedDirectory, itemTrimmed)
+
+            'Create the directory for the file if it doesn't exist
+            Dim modTempFilesParentDirectory = Path.GetDirectoryName(Path.Combine(modTempFiles, itemTrimmed))
+            If Not Directory.Exists(modTempFilesParentDirectory) Then
+                Directory.CreateDirectory(modTempFilesParentDirectory)
             End If
+
+            'Copy the file
+            File.Copy(fileName, Path.Combine(modTempFiles, item.TrimStart("\")), True)
         Next
 
         Dim f As New AsyncFor
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
         Dim onProgressChanged = Sub(sender As Object, e As LoadingStatusChangedEventArgs)
-                                    Me.BuildProgress = e.Progress
+                                    BuildProgress = e.Progress
                                 End Sub
         AddHandler f.LoadingStatusChanged, onProgressChanged
 
-        Await f.RunForEach(Of String)(Async Function(Item As String) As Task
-                                          Dim patchMade As Boolean = False
-                                          'Detect and use appropriate patching program
-                                          For Each patcher In CustomFilePatchers
-                                              Dim reg As New Regex(patcher.FilePath, RegexOptions.IgnoreCase)
-                                              If reg.IsMatch(Item) Then
-                                                  If patcher IsNot Nothing AndAlso Not patchers.Contains(patcher) Then
-                                                      patchers.Add(patcher)
-                                                  End If
-                                                  If Not IO.Directory.Exists(IO.Path.GetDirectoryName(IO.Path.Combine(modTempFiles, Item.Trim("\")))) Then
-                                                      IO.Directory.CreateDirectory(IO.Path.GetDirectoryName(IO.Path.Combine(modTempFiles, Item.Trim("\"))))
-                                                  End If
+        Await f.RunForEach(Async Function(Item As String) As Task
+                               Dim itemTrimmed = Item.Trim("\")
+                               Dim patchMade As Boolean = False
 
-                                                  Dim oldF As String = IO.Path.Combine(originalDirectory, Item.Trim("\"))
-                                                  Dim newF As String = IO.Path.Combine(modifiedDirectory, Item.Trim("\"))
-                                                  Dim patchFile As String = IO.Path.Combine(modTempFiles, Item.Trim("\") & "." & patcher.PatchExtension.Trim("*").Trim("."))
+                               'Create the directory for the patch if it doesn't exist
+                               Dim modTempFilesParentDirectory = Path.GetDirectoryName(Path.Combine(modTempFiles, itemTrimmed))
+                               If Not Directory.Exists(modTempFilesParentDirectory) Then
+                                   Directory.CreateDirectory(modTempFilesParentDirectory)
+                               End If
 
-                                                  Await ProcessHelper.RunProgram(patcher.CreatePatchProgram, String.Format(patcher.CreatePatchArguments, oldF, newF, patchFile)).ConfigureAwait(False)
-                                                  patchMade = True
-                                                  Exit For
-                                              End If
-                                          Next
-                                          If Not patchMade Then
-                                              'Use xdelta for all other file types
-                                              If Not IO.Directory.Exists(IO.Path.GetDirectoryName(IO.Path.Combine(modTempFiles, Item.Trim("\")))) Then
-                                                  IO.Directory.CreateDirectory(IO.Path.GetDirectoryName(IO.Path.Combine(modTempFiles, Item.Trim("\"))))
-                                              End If
-                                              Dim tmpVal As String = Guid.NewGuid.ToString
-                                              Dim oldFile As String = IO.Path.Combine(originalDirectory, Item.Trim("\"))
-                                              Dim oldFileTemp As String = IO.Path.Combine(EnvironmentPaths.GetResourceName("xdelta"), $"oldFile-{tmpVal}.bin")
-                                              Dim newFile As String = IO.Path.Combine(modifiedDirectory, Item.Trim("\"))
-                                              Dim newFileTemp As String = IO.Path.Combine(EnvironmentPaths.GetResourceName("xdelta"), $"newFile-{tmpVal}.bin")
-                                              Dim deltaFile As String = IO.Path.Combine(modTempFiles, Item.Trim("\") & ".xdelta")
-                                              Dim deltaFileTemp As String = IO.Path.Combine(EnvironmentPaths.GetResourceName("xdelta"), $"patch-{tmpVal}.xdelta")
-                                              IO.File.Copy(oldFile, oldFileTemp, True)
-                                              IO.File.Copy(newFile, newFileTemp, True)
-                                              Dim path = IO.Path.Combine(EnvironmentPaths.GetResourceDirectory, "xdelta", "xdelta3.exe")
-                                              Await ProcessHelper.RunProgram(IO.Path.Combine(EnvironmentPaths.GetResourceDirectory, "xdelta", "xdelta3.exe"), String.Format("-e -s ""{0}"" ""{1}"" ""{2}""", $"oldFile-{tmpVal}.bin", $"newFile-{tmpVal}.bin", $"patch-{tmpVal}.xdelta")).ConfigureAwait(False)
-                                              IO.File.Copy(deltaFileTemp, deltaFile)
-                                              IO.File.Delete(deltaFileTemp)
-                                              IO.File.Delete(oldFileTemp)
-                                              IO.File.Delete(newFileTemp)
-                                          End If
-                                      End Function, actions.ToUpdate)
-        '-Copy Patcher programs for non-standard file formats
-        'XDelta will be copied with the modpack
-        If Not IO.Directory.Exists(modTempTools) Then
-            IO.Directory.CreateDirectory(modTempTools)
+                               'Detect and use appropriate patching program
+                               For Each patcher In CustomFilePatchers
+                                   Dim reg As New Regex(patcher.FilePath, RegexOptions.IgnoreCase)
+                                   'Determine if there is a patcher that supports a file at the current path
+                                   If reg.IsMatch(Item) Then
+                                       'If so, add it to the list of patchers if it's not already there
+                                       If patcher IsNot Nothing AndAlso Not patchers.Contains(patcher) Then
+                                           patchers.Add(patcher)
+                                       End If
+
+                                       '- Run the patcher
+                                       Dim oldF As String = Path.Combine(originalDirectory, itemTrimmed)
+                                       Dim newF As String = Path.Combine(modifiedDirectory, itemTrimmed)
+                                       Dim patchFile As String = Path.Combine(modTempFiles, itemTrimmed & "." & patcher.PatchExtension.Trim("*").Trim("."))
+
+
+
+                                       Throw New NotImplementedException("Relative path must be converted into absolute path"
+
+                                       Await ProcessHelper.RunProgram(patcher.CreatePatchProgram, String.Format(patcher.CreatePatchArguments, oldF, newF, patchFile)).ConfigureAwait(False)
+                                       patchMade = True
+                                       Exit For 'Stop looking for patchers, we've found one
+                                   End If
+                               Next
+
+                               'Use xdelta for all other file types
+                               If Not patchMade Then
+                                   Using xdelta As New xdelta
+                                       Dim oldFile As String = Path.Combine(originalDirectory, itemTrimmed)
+                                       Dim newFile As String = Path.Combine(modifiedDirectory, itemTrimmed)
+                                       Dim deltaFile As String = Path.Combine(modTempFiles, itemTrimmed & ".xdelta")
+                                       Await xdelta.CreatePatch(oldFile, newFile, deltaFile)
+                                   End Using
+                               End If
+                           End Function, actions.ToUpdate)
+
+        '-Copy Patcher programs for non-standard file formats (xdelta will be copied with the modpack)
+        '-- Create the tools directory if it doesn't exist
+        If Not Directory.Exists(modTempTools) Then
+            Directory.CreateDirectory(modTempTools)
         End If
+        '- Copy the patchers
         For Each item In patchers
             If item IsNot Nothing Then
-                IO.File.Copy(item.ApplyPatchProgram, IO.Path.Combine(modTempTools, IO.Path.GetFileName(item.ApplyPatchProgram)), True)
+                File.Copy(item.ApplyPatchProgram, IO.Path.Combine(modTempTools, IO.Path.GetFileName(item.ApplyPatchProgram)), True)
             End If
         Next
+        '- Serialize the list of patchers
         Json.SerializeToFile(IO.Path.Combine(modTempTools, "patchers.json"), patchers, provider)
 
-        '-Zip Mod
+        '- Zip Mod
         Zip.Zip(ModTempDir, outputModFilename)
 
+        '- Cleanup
+        Directory.Delete(ModTempDir, True)
+        _modTempDir = Nothing
 
-        Me.BuildProgress = 1
-        Me.BuildStatusMessage = My.Resources.Language.Complete
-
+        'Report completion
+        BuildProgress = 1
+        BuildStatusMessage = My.Resources.Language.Complete
         IsBuildComplete = True
     End Function
 End Class
