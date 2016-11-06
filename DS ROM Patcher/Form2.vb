@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports System.IO
 Imports System.Reflection
 Imports System.Web.Script.Serialization
 Imports ICSharpCode.SharpZipLib.Zip
@@ -6,13 +7,30 @@ Imports ICSharpCode.SharpZipLib.Zip
 Public Class Form2
     Private WithEvents core As PatcherCore
     Private Property Mods As List(Of ModJson)
+    Private Property Modpack As ModpackInfo
+
+    Private Property IsLoading As Boolean
+        Get
+            Return _isLoading
+        End Get
+        Set(value As Boolean)
+            _isLoading = value
+
+            btnBrowse.Enabled = Not value
+            btnPatch.Enabled = Not value
+        End Set
+    End Property
+    Dim _isLoading As Boolean
+
     Private Async Sub Form2_Load(sender As Object, e As EventArgs) Handles Me.Load
+        Dim j As New JavaScriptSerializer
         Me.Text = String.Format("{0} Patcher v{1}", "DS", Assembly.GetExecutingAssembly.GetName.Version.ToString)
         core = New NDSand3DSCore
 
         'Unpack Mods
         Dim currentDirectory = Environment.CurrentDirectory
         Dim modTempDirectory = IO.Path.Combine(currentDirectory, "Tools/modstemp")
+        Modpack = j.Deserialize(Of ModpackInfo)(File.ReadAllText(IO.Path.Combine(currentDirectory, "Mods", "Modpack Info")))
 
         If Not IO.Directory.Exists(modTempDirectory) Then
             IO.Directory.CreateDirectory(modTempDirectory)
@@ -37,7 +55,6 @@ Public Class Form2
         'Load Mods
         Dim modDirs = IO.Directory.GetDirectories(modTempDirectory, "*", IO.SearchOption.TopDirectoryOnly)
         Dim total As Integer = modDirs.Count
-        Dim j As New JavaScriptSerializer
         Mods = New List(Of ModJson)
 
         lblStatus.Text = "Opening Mods..."
@@ -66,7 +83,7 @@ Public Class Form2
             btnPatch.Enabled = False
             core.SelectedFilename = args(1)
             For Each item In Mods
-                If core.SupportsMod(item) Then
+                If Await core.SupportsMod(Modpack, item) Then
                     chbMods.Items.Add(item, True)
                 End If
             Next
@@ -75,20 +92,20 @@ Public Class Form2
             For Each item In chbMods.CheckedItems
                 items.Add(item)
             Next
-            Await core.RunPatch(items, args(2))
+            Await core.RunPatch(Modpack, items, args(2))
 
             Me.Close()
         End If
     End Sub
 
-    Private Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
+    Private Async Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
         core.PromptFilePath()
         txtInput.Text = core.SelectedFilename
 
         'Display supported mods
         chbMods.Items.Clear()
         For Each item In Mods
-            If core.SupportsMod(item) Then
+            If Await core.SupportsMod(Modpack, item) Then
                 chbMods.Items.Add(item, True)
             End If
         Next
@@ -101,11 +118,15 @@ Public Class Form2
     End Sub
 
     Private Async Sub btnPatch_Click(sender As Object, e As EventArgs) Handles btnPatch.Click
+        IsLoading = True
+
         Dim items As New List(Of ModJson)
         For Each item In chbMods.CheckedItems
             items.Add(item)
         Next
-        Await core.RunPatch(items)
+        Await core.RunPatch(Modpack, items)
+
+        IsLoading = False
     End Sub
 
     Private Sub Form2_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
