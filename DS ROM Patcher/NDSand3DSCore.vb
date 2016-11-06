@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Text.RegularExpressions
 Imports System.Web.Script.Serialization
 
 Public Class NDSand3DSCore
@@ -12,11 +13,10 @@ Public Class NDSand3DSCore
         End If
     End Sub
 
-    Public Overrides Async Function RunPatch(Mods As IEnumerable(Of ModJson), Optional DestinationPath As String = Nothing) As Task
+    Public Overrides Async Function RunPatch(modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
         Dim j As New JavaScriptSerializer
         Dim currentDirectory = Environment.CurrentDirectory
         Dim args = Environment.GetCommandLineArgs
-        Dim info As ModpackInfo = j.Deserialize(Of ModpackInfo)(File.ReadAllText(IO.Path.Combine(currentDirectory, "Mods", "Modpack Info")))
         Dim ROMDirectory = Path.Combine(currentDirectory, "Tools/dstemp")
         Dim modTempDirectory = Path.Combine(currentDirectory, "Tools/modstemp")
         Dim isDirectoryMode As Boolean = False
@@ -57,7 +57,7 @@ Public Class NDSand3DSCore
 
             Dim patchers = j.Deserialize(Of List(Of FilePatcher))(IO.File.ReadAllText(IO.Path.Combine(currentDirectory, "Tools", "patchers.json")))
             Dim modFiles As New List(Of ModFile)
-            For Each item In Mods
+            For Each item In mods
                 modFiles.Add(New ModFile(item.Filename))
             Next
 
@@ -88,18 +88,18 @@ Public Class NDSand3DSCore
             End If
 
             RaiseProgressChanged(2 / 3, "Repacking the ROM...", True)
-            If Not isHansMode AndAlso String.IsNullOrEmpty(DestinationPath) AndAlso Not sourceExt = ".nds" AndAlso Not sourceExt = ".srl" Then
+            If Not isHansMode AndAlso String.IsNullOrEmpty(destinationPath) AndAlso Not sourceExt = ".nds" AndAlso Not sourceExt = ".srl" Then
                 If MessageBox.Show("Would you like to output to HANS?  (Say no to output to .3DS or .CIA)", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.Yes Then
                     isHansMode = True
                 End If
             End If
 
             If isHansMode OrElse sourceExt = ".cxi" Then
-                If String.IsNullOrEmpty(DestinationPath) Then
+                If String.IsNullOrEmpty(destinationPath) Then
                     Dim d As New FolderBrowserDialog
                     d.Description = "Please select the root of your SD card."
 ShowFolderDialog3DS: If d.ShowDialog = DialogResult.OK Then
-                        DestinationPath = d.SelectedPath
+                        destinationPath = d.SelectedPath
                     Else
                         If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
                             GoTo ShowFolderDialog3DS
@@ -107,9 +107,9 @@ ShowFolderDialog3DS: If d.ShowDialog = DialogResult.OK Then
                     End If
                 End If
 
-                Await c.BuildHans(ROMDirectory, DestinationPath, info.ShortName)
+                Await c.BuildHans(ROMDirectory, destinationPath, modpack.ShortName)
             Else
-                If String.IsNullOrEmpty(DestinationPath) Then
+                If String.IsNullOrEmpty(destinationPath) Then
 ShowSaveDialogNDS:  Dim s As New SaveFileDialog
                     Select Case sourceExt
                         Case ".nds", ".srl"
@@ -123,7 +123,7 @@ ShowSaveDialogNDS:  Dim s As New SaveFileDialog
                             s.Filter = "All Files|*.*"
                     End Select
                     If s.ShowDialog = DialogResult.OK Then
-                        DestinationPath = s.FileName
+                        destinationPath = s.FileName
                     Else
                         If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
                             GoTo ShowSaveDialogNDS
@@ -132,7 +132,7 @@ ShowSaveDialogNDS:  Dim s As New SaveFileDialog
                 End If
 
                 'Todo: watch progress changed event
-                Await c.BuildAuto(ROMDirectory, DestinationPath)
+                Await c.BuildAuto(ROMDirectory, destinationPath)
             End If
             RaiseProgressChanged(1, "Ready")
 
@@ -141,8 +141,9 @@ ShowSaveDialogNDS:  Dim s As New SaveFileDialog
         End Using
     End Function
 
-    Public Overrides Function SupportsMod(ModToCheck As ModJson) As Boolean
-        'Todo: check against currently opened file to see if game code matches
-        Return True
+    Public Overrides Async Function SupportsMod(modpack As ModpackInfo, modToCheck As ModJson) As Task(Of Boolean)
+        Dim currentCode = Await DotNet3dsToolkit.MetadataReader.GetGameID(SelectedFilename)
+        Dim supportedCode = New Regex(modpack.GameCode)
+        Return supportedCode.IsMatch(currentCode)
     End Function
 End Class

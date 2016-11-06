@@ -28,11 +28,9 @@
     Public MustOverride Sub PromptFilePath()
 
     ''' <summary>
-    ''' Determines whether or not the given mod supports the file chosen with SelectFilePath.
+    ''' Determines whether or not the ROM located at the path <see cref="SelectedFilename"/> is supported a mod and its modpack.
     ''' </summary>
-    ''' <param name="ModToCheck"></param>
-    ''' <returns></returns>
-    Public MustOverride Function SupportsMod(ModToCheck As ModJson) As Boolean
+    Public MustOverride Function SupportsMod(modpack As ModpackInfo, modToCheck As ModJson) As Task(Of Boolean)
 
-    Public MustOverride Function RunPatch(Mods As IEnumerable(Of ModJson), Optional DestinationPath As String = Nothing) As Task
+    Public MustOverride Function RunPatch(modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
 End Class
