@@ -36,4 +36,20 @@
     ''' Relative paths of dependency files required by either the <see cref="CreatePatchProgram"/> or the <see cref="ApplyPatchProgram"/>
     ''' </summary>
     Public Property Dependencies As List(Of String)
+
+    Public Overrides Function Equals(obj As Object) As Boolean
+        If TypeOf obj Is FilePatcherJson Then
+            Dim other As FilePatcherJson = obj
+
+            Return Me.FilePath = other.FilePath AndAlso
+                Me.CreatePatchProgram = other.CreatePatchProgram AndAlso
+                Me.CreatePatchArguments = other.CreatePatchArguments AndAlso
+                Me.ApplyPatchProgram = other.ApplyPatchProgram AndAlso
+                Me.ApplyPatchArguments = other.ApplyPatchArguments AndAlso
+            Me.PatchExtension = other.PatchExtension AndAlso
+                Me.Dependencies.SequenceEqual(other.Dependencies)
+        Else
+            Return False
+        End If
+    End Function
 End Class

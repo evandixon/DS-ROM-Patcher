@@ -13,8 +13,34 @@ Public Class FilePatcher
     End Function
 
     Public Shared Sub SerializePatherListToFile(patchers As List(Of FilePatcher), filename As String, provider As WindowsIOProvider)
-        Dim jsons As List(Of FilePatcherJson) = patchers.Select(Function(x) x.SerializableInfo).ToList
+        Dim jsons As List(Of FilePatcherJson) = patchers.Select(Function(x) x.SerializableInfo).ToList.Distinct
         Json.SerializeToFile(filename, jsons, provider)
+    End Sub
+
+    Public Shared Sub ImportCurrentPatcherPack(patcherZipFilename As String)
+        'Open existing patchers
+        Dim patchersDir = Path.Combine(Environment.CurrentDirectory, "Tools", "Patchers")
+        Dim patchersFile = Path.Combine(patchersDir, "patchers.json")
+        Dim currentPatchers = DeserializePatcherList(patchersFile, patchersDir)
+
+        'Unzip importing patchers
+        Dim tempDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp-" & Guid.NewGuid.ToString)
+        Zip.Unzip(patcherZipFilename, tempDirectory)
+
+        'Copy patchers
+        For Each item In DeserializePatcherList(Path.Combine(tempDirectory, "patchers.json"), tempDirectory)
+            item.CopyToolsToDirectory(patchersDir)
+            currentPatchers.Add(item)
+        Next
+        SerializePatherListToFile(currentPatchers, patchersFile, New WindowsIOProvider)
+
+        'Cleanup
+        Directory.Delete(tempDirectory, True)
+    End Sub
+
+    Public Shared Sub ExportCurrentPatcherPack(patcherZipFilename As String)
+        Dim patchersDir = Path.Combine(Environment.CurrentDirectory, "Tools", "Patchers")
+        Zip.Zip(patchersDir, patcherZipFilename)
     End Sub
 
     Public Sub New(serializableInfo As FilePatcherJson, toolsDirectory As String)

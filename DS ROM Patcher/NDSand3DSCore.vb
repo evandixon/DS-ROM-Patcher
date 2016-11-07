@@ -16,6 +16,7 @@ Public Class NDSand3DSCore
         Dim currentDirectory = Environment.CurrentDirectory
         Dim args = Environment.GetCommandLineArgs
         Dim toolsDir = Path.Combine(currentDirectory, "Tools")
+        Dim patchersDir = Path.Combine(toolsDir, "Patchers")
         Dim ROMDirectory = Path.Combine(toolsDir, "dstemp")
         Dim modTempDirectory = Path.Combine(toolsDir, "modstemp")
         Dim isDirectoryMode As Boolean = False
@@ -54,7 +55,7 @@ Public Class NDSand3DSCore
             Const RepackMessage As String = "Applying the mods..."
             RaiseProgressChanged(1 / 3, RepackMessage)
 
-            Dim patchers = FilePatcher.DeserializePatcherList(Path.Combine(toolsDir, "patchers.json"), toolsDir)
+            Dim patchers = FilePatcher.DeserializePatcherList(Path.Combine(patchersDir, "patchers.json"), patchersDir)
             Dim modFiles As New List(Of ModFile)
             For Each item In mods
                 modFiles.Add(New ModFile(item.Filename))
