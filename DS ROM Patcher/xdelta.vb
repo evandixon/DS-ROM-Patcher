@@ -34,6 +34,7 @@ Public Class xdelta
         File.Copy(oldFilename, oldFileTemp, True)
         File.Copy(newFilename, newFileTemp, True)
         Await ProcessHelper.RunProgram(XDeltaPath, String.Format("-e -s ""{0}"" ""{1}"" ""{2}""", $"oldFile.bin", $"newFile.bin", $"patch.xdelta")).ConfigureAwait(False)
+        File.Copy(deltaFileTemp, patchFile, True)
     End Function
 
 #Region "IDisposable Support"
