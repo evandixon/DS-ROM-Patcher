@@ -130,6 +130,12 @@
     <Compile Include="Form2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ModpackMetadataWindow.Designer.vb">
+      <DependentUpon>ModpackMetadataWindow.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ModpackMetadataWindow.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WindowsIOProvider.vb" />
     <Compile Include="Language.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -171,6 +177,9 @@
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Language.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ModpackMetadataWindow.resx">
+      <DependentUpon>ModpackMetadataWindow.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

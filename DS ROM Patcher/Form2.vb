@@ -173,6 +173,14 @@ Public Class Form2
             End If
         End If
     End Sub
+
+    Private Sub EditMetadataToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EditMetadataToolStripMenuItem.Click
+        Dim metaEdit As New ModpackMetadataWindow(Modpack)
+        If metaEdit.ShowDialog = DialogResult.OK Then
+            Modpack = metaEdit.ModpackInfo
+            Json.SerializeToFile(modpackInfoFilename, Modpack, New WindowsIOProvider)
+        End If
+    End Sub
 #End Region
 
     Private Async Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click

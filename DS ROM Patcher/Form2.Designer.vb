@@ -38,8 +38,9 @@ Partial Class Form2
         Me.ImportPatcherPackToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExportPatcherPackToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ModsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.chbDesignMode = New System.Windows.Forms.CheckBox()
         Me.CreateModToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.chbDesignMode = New System.Windows.Forms.CheckBox()
+        Me.EditMetadataToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.GroupBox1.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SplitContainer1.Panel1.SuspendLayout()
@@ -188,10 +189,16 @@ Partial Class Form2
         '
         'ModsToolStripMenuItem
         '
-        Me.ModsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateModToolStripMenuItem})
+        Me.ModsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateModToolStripMenuItem, Me.EditMetadataToolStripMenuItem})
         Me.ModsToolStripMenuItem.Name = "ModsToolStripMenuItem"
-        Me.ModsToolStripMenuItem.Size = New System.Drawing.Size(49, 20)
-        Me.ModsToolStripMenuItem.Text = "&Mods"
+        Me.ModsToolStripMenuItem.Size = New System.Drawing.Size(69, 20)
+        Me.ModsToolStripMenuItem.Text = "&Modpack"
+        '
+        'CreateModToolStripMenuItem
+        '
+        Me.CreateModToolStripMenuItem.Name = "CreateModToolStripMenuItem"
+        Me.CreateModToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.CreateModToolStripMenuItem.Text = "&Create Mod"
         '
         'chbDesignMode
         '
@@ -204,11 +211,11 @@ Partial Class Form2
         Me.chbDesignMode.Text = "Design Mode"
         Me.chbDesignMode.UseVisualStyleBackColor = True
         '
-        'CreateModToolStripMenuItem
+        'EditMetadataToolStripMenuItem
         '
-        Me.CreateModToolStripMenuItem.Name = "CreateModToolStripMenuItem"
-        Me.CreateModToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
-        Me.CreateModToolStripMenuItem.Text = "&Create Mod"
+        Me.EditMetadataToolStripMenuItem.Name = "EditMetadataToolStripMenuItem"
+        Me.EditMetadataToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.EditMetadataToolStripMenuItem.Text = "&Edit Metadata"
         '
         'Form2
         '
@@ -259,4 +266,5 @@ Partial Class Form2
     Friend WithEvents ExportPatcherPackToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ModsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CreateModToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents EditMetadataToolStripMenuItem As ToolStripMenuItem
 End Class
