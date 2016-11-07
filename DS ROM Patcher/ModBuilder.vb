@@ -84,6 +84,8 @@ Public Class ModBuilder
     Dim _isBuildComplete As Boolean
 #End Region
 
+    Public Property ModID As String
+
     Public Property ModName As String
 
     Public Property ModVersion As String
@@ -140,7 +142,9 @@ Public Class ModBuilder
         Dim actions As New ModJson
         actions.DependenciesBefore = ModDependenciesBefore
         actions.DependenciesAfter = ModDependenciesAfter
+        actions.ID = ModID
         actions.Name = ModName
+        actions.Version = ModVersion
         actions.Author = ModAuthor
         actions.Description = ModDescription
         actions.UpdateUrl = Homepage
@@ -256,7 +260,7 @@ Public Class ModBuilder
         '-Copy and write files
         Await FileSystem.ReCreateDirectory(ModTempDir, provider)
 
-        IO.File.WriteAllText(IO.Path.Combine(ModTempDir, "mod.json"), Json.Serialize(actions))
+        File.WriteAllText(IO.Path.Combine(ModTempDir, "mod.json"), Json.Serialize(actions))
 
         Me.BuildProgress = 0
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
@@ -282,6 +286,9 @@ Public Class ModBuilder
                                     BuildProgress = e.Progress
                                 End Sub
         AddHandler f.LoadingStatusChanged, onProgressChanged
+
+        'TODO: remove
+        f.RunSynchronously = True
 
         Await f.RunForEach(Async Function(Item As String) As Task
                                Dim itemTrimmed = Item.Trim("\")

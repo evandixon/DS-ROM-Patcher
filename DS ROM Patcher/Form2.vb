@@ -18,6 +18,7 @@ Public Class Form2
     Private WithEvents core As PatcherCore
     Private Property Mods As List(Of ModJson)
     Private Property Modpack As ModpackInfo
+    Private Property Patchers As List(Of FilePatcher)
 
     Private Property IsLoading As Boolean
         Get
@@ -32,14 +33,14 @@ Public Class Form2
     End Property
     Dim _isLoading As Boolean
 
+    'Filenames
+    Dim currentDirectory = Environment.CurrentDirectory
+    Dim modTempDirectory = Path.Combine(currentDirectory, "Tools", "modstemp")
+    Dim modsDirectory = Path.Combine(currentDirectory, "Mods")
+    Dim modpackInfoFilename As String = Path.Combine(modsDirectory, "Modpack.json")
+
     Private Async Sub Form2_Load(sender As Object, e As EventArgs) Handles Me.Load
         Dim completed As Integer = 0
-
-        'Filenames
-        Dim currentDirectory = Environment.CurrentDirectory
-        Dim modTempDirectory = Path.Combine(currentDirectory, "Tools", "modstemp")
-        Dim modsDirectory = Path.Combine(currentDirectory, "Mods")
-        Dim modpackInfoFilename As String = Path.Combine(modsDirectory, "Modpack.json")
 
         'Create directories
         If Not Directory.Exists(modsDirectory) Then
@@ -65,17 +66,17 @@ Public Class Form2
                 pbProgress.Value = completed / modFiles.Count
 
                 Dim z As New FastZip
-                If Not IO.Directory.Exists(IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item))) Then
-                    IO.Directory.CreateDirectory(IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item)))
+                If Not IO.Directory.Exists(Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item))) Then
+                    IO.Directory.CreateDirectory(Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item)))
                 End If
-                z.ExtractZip(item, IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item)), ".*")
+                z.ExtractZip(item, Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item)), ".*")
 
                 completed += 1
             Next
         End If
 
         'Load Mods
-        Dim modDirs = Directory.GetDirectories(modTempDirectory, "*", IO.SearchOption.TopDirectoryOnly)
+        Dim modDirs = Directory.GetDirectories(modTempDirectory, "*", SearchOption.TopDirectoryOnly)
         Dim total As Integer = modDirs.Count
         Mods = New List(Of ModJson)
 
@@ -87,7 +88,7 @@ Public Class Form2
 
             Dim jsonFile = IO.Path.Combine(item, "mod.json")
             If IO.File.Exists(jsonFile) Then
-                Dim m = Json.Deserialize(Of ModJson)(IO.File.ReadAllText(jsonFile))
+                Dim m = Json.Deserialize(Of ModJson)(File.ReadAllText(jsonFile))
                 m.Filename = jsonFile
                 Mods.Add(m)
                 completed += 1
@@ -97,6 +98,15 @@ Public Class Form2
         Next
 
         lblStatus.Text = "Ready"
+
+        'Load patchers
+        Dim patchersDir = Path.Combine(currentDirectory, "Tools", "Patchers")
+        Dim patchersPath = Path.Combine(patchersDir, "patchers.json")
+        If File.Exists(patchersPath) Then
+            Patchers = FilePatcher.DeserializePatcherList(patchersPath, patchersDir)
+        Else
+            Patchers = New List(Of FilePatcher)
+        End If
 
         'Auto-patch, if applicable
         Dim args = Environment.GetCommandLineArgs
@@ -136,12 +146,43 @@ Public Class Form2
             FilePatcher.ExportCurrentPatcherPack(s.FileName)
         End If
     End Sub
+
+    Private Async Sub CreateModToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CreateModToolStripMenuItem.Click
+        Dim c As New CreateModWindow(Patchers)
+        If c.ShowDialog = DialogResult.OK Then
+            Dim item = c.CreatedModFilename
+
+            'If a mod was created, extract it
+            Dim extractedModDirectory = Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item))
+            If Not Directory.Exists(extractedModDirectory) Then
+                Directory.CreateDirectory(extractedModDirectory)
+            End If
+            Zip.Unzip(item, extractedModDirectory)
+
+            'Then open the JSON and add it
+            Dim jsonFile = Path.Combine(extractedModDirectory, "mod.json")
+            If File.Exists(jsonFile) Then
+                Dim m = Json.Deserialize(Of ModJson)(File.ReadAllText(jsonFile))
+                m.Filename = jsonFile
+                Mods.Add(m)
+
+                'Then refresh the display
+                If Not String.IsNullOrEmpty(core.SelectedFilename) Then
+                    Await RefreshModList()
+                End If
+            End If
+        End If
+    End Sub
 #End Region
 
     Private Async Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
         core.PromptFilePath()
         txtInput.Text = core.SelectedFilename
 
+        Await RefreshModList()
+    End Sub
+
+    Private Async Function RefreshModList() As Task
         'Display supported mods
         chbMods.Items.Clear()
         For Each item In Mods
@@ -149,7 +190,7 @@ Public Class Form2
                 chbMods.Items.Add(item, True)
             End If
         Next
-    End Sub
+    End Function
 
     Private Sub chbMods_SelectedIndexChanged(sender As Object, e As EventArgs) Handles chbMods.SelectedIndexChanged
         If chbMods.SelectedIndex > -1 Then
@@ -171,10 +212,10 @@ Public Class Form2
 
     Private Sub Form2_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
         Dim currentDirectory = Environment.CurrentDirectory
-        Dim modTempDirectory = IO.Path.Combine(currentDirectory, "Tools/modstemp")
-        If IO.Directory.Exists(modTempDirectory) Then
-            For Each item In IO.Directory.GetDirectories(modTempDirectory, "*", IO.SearchOption.TopDirectoryOnly)
-                IO.Directory.Delete(item, True)
+        Dim modTempDirectory = IO.Path.Combine(currentDirectory, "Tools", "modstemp")
+        If Directory.Exists(modTempDirectory) Then
+            For Each item In Directory.GetDirectories(modTempDirectory, "*", IO.SearchOption.TopDirectoryOnly)
+                Directory.Delete(item, True)
             Next
         End If
     End Sub

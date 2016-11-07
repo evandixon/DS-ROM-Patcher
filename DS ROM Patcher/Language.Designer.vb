@@ -126,5 +126,14 @@ Namespace My.Resources
                 Return ResourceManager.GetString("PatcherPack", resourceCulture)
             End Get
         End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Supported ROMs.
+        '''</summary>
+        Friend Shared ReadOnly Property SupportedROMs() As String
+            Get
+                Return ResourceManager.GetString("SupportedROMs", resourceCulture)
+            End Get
+        End Property
     End Class
 End Namespace

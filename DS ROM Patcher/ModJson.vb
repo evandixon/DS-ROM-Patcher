@@ -12,7 +12,13 @@
     Public Property ToDelete As List(Of String)
     Public Property ToRename As Dictionary(Of String, String)
     Public Property ToUpdate As List(Of String)
+
+    ''' <summary>
+    ''' Unique identifier for the mod
+    ''' </summary>
+    Public Property ID As String
     Public Property Name As String
+    Public Property Version As String
     Public Property Author As String
     Public Property Description As String
     Public Property DependenciesBefore As List(Of String)

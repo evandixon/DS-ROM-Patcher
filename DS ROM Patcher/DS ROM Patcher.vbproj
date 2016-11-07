@@ -116,6 +116,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
+    <Compile Include="CreateModWindow.Designer.vb">
+      <DependentUpon>CreateModWindow.vb</DependentUpon>
+    </Compile>
+    <Compile Include="CreateModWindow.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="FilePatcher.vb" />
     <Compile Include="FilePatcherJson.vb" />
     <Compile Include="Form2.Designer.vb">
@@ -155,6 +161,9 @@
     <Compile Include="xdelta.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CreateModWindow.resx">
+      <DependentUpon>CreateModWindow.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form2.resx">
       <DependentUpon>Form2.vb</DependentUpon>
     </EmbeddedResource>

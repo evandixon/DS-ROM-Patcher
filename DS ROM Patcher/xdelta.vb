@@ -7,6 +7,9 @@ Public Class xdelta
         Get
             If _XDeltaDirectory Is Nothing Then
                 _XDeltaDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "XDelta3-" & Guid.NewGuid.ToString)
+                If Not Directory.Exists(_XDeltaDirectory) Then
+                    Directory.CreateDirectory(_XDeltaDirectory)
+                End If
             End If
             Return _XDeltaDirectory
         End Get
@@ -30,7 +33,7 @@ Public Class xdelta
         Dim deltaFileTemp As String = Path.Combine(XDeltaDirectory, $"patch.xdelta")
         File.Copy(oldFilename, oldFileTemp, True)
         File.Copy(newFilename, newFileTemp, True)
-        Await ProcessHelper.RunProgram(Path.Combine(XDeltaDirectory, "xdelta3.exe"), String.Format("-e -s ""{0}"" ""{1}"" ""{2}""", $"oldFile.bin", $"newFile.bin", $"patch.xdelta")).ConfigureAwait(False)
+        Await ProcessHelper.RunProgram(XDeltaPath, String.Format("-e -s ""{0}"" ""{1}"" ""{2}""", $"oldFile.bin", $"newFile.bin", $"patch.xdelta")).ConfigureAwait(False)
     End Function
 
 #Region "IDisposable Support"
@@ -67,4 +70,5 @@ Public Class xdelta
         ' GC.SuppressFinalize(Me)
     End Sub
 #End Region
+
 End Class

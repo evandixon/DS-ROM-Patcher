@@ -5,6 +5,7 @@ Public Class ModFile
     Public Sub New(Filename As String)
         Dim provider As New WindowsIOProvider
         Me.ModDetails = Json.DeserializeFromFile(Of ModJson)(Filename, provider)
+        Me.ID = Me.ModDetails.ID
         Me.Name = Me.ModDetails.Name
         Me.Patched = False
         Me.Filename = Filename
@@ -18,6 +19,7 @@ Public Class ModFile
     End Sub
 
     Public Property ModDetails As ModJson
+    Public Property ID As String
     Public Property Name As String
     Public Property Patched As Boolean
     Public Property Filename As String
@@ -112,7 +114,7 @@ Public Class ModFile
             'Patch depencencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
                 For Each item In ModFile.ModDetails.DependenciesBefore
-                    Dim q = From m In Mods Where m.Name = item AndAlso Not String.IsNullOrEmpty(m.Name)
+                    Dim q = From m In Mods Where m.id = item AndAlso Not String.IsNullOrEmpty(m.id)
 
                     For Each d In q
                         Await ApplyPatch(Mods, d, currentDirectory, ROMDirectory, patchers)
@@ -123,7 +125,7 @@ Public Class ModFile
             'Patch dependencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
                 For Each item In ModFile.ModDetails.DependenciesAfter
-                    Dim q = From m In Mods Where m.Name = item AndAlso Not String.IsNullOrEmpty(m.Name)
+                    Dim q = From m In Mods Where m.id = item AndAlso Not String.IsNullOrEmpty(m.id)
 
                     For Each d In q
                         Await ApplyPatch(Mods, d, currentDirectory, ROMDirectory, patchers)
@@ -134,9 +136,9 @@ Public Class ModFile
     End Function
 
     Public Shared Sub CopyFile(OriginalFilename As String, NewFilename As String, Overwrite As Boolean)
-        If Not IO.Directory.Exists(IO.Path.GetDirectoryName(NewFilename)) Then
-            IO.Directory.CreateDirectory(IO.Path.GetDirectoryName(NewFilename))
+        If Not Directory.Exists(IO.Path.GetDirectoryName(NewFilename)) Then
+            Directory.CreateDirectory(IO.Path.GetDirectoryName(NewFilename))
         End If
-        IO.File.Copy(OriginalFilename, NewFilename, Overwrite)
+        File.Copy(OriginalFilename, NewFilename, Overwrite)
     End Sub
 End Class
