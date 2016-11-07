@@ -1,8 +1,8 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
 Imports System.Reflection
-Imports System.Web.Script.Serialization
 Imports ICSharpCode.SharpZipLib.Zip
+Imports SkyEditor.Core.Utilities
 
 Public Class Form2
     Private WithEvents core As PatcherCore
@@ -23,14 +23,13 @@ Public Class Form2
     Dim _isLoading As Boolean
 
     Private Async Sub Form2_Load(sender As Object, e As EventArgs) Handles Me.Load
-        Dim j As New JavaScriptSerializer
         Me.Text = String.Format("{0} Patcher v{1}", "DS", Assembly.GetExecutingAssembly.GetName.Version.ToString)
         core = New NDSand3DSCore
 
         'Unpack Mods
         Dim currentDirectory = Environment.CurrentDirectory
         Dim modTempDirectory = IO.Path.Combine(currentDirectory, "Tools/modstemp")
-        Modpack = j.Deserialize(Of ModpackInfo)(File.ReadAllText(IO.Path.Combine(currentDirectory, "Mods", "Modpack Info")))
+        Modpack = Json.Deserialize(Of ModpackInfo)(File.ReadAllText(IO.Path.Combine(currentDirectory, "Mods", "Modpack Info")))
 
         If Not IO.Directory.Exists(modTempDirectory) Then
             IO.Directory.CreateDirectory(modTempDirectory)
@@ -65,7 +64,7 @@ Public Class Form2
 
             Dim jsonFile = IO.Path.Combine(item, "mod.json")
             If IO.File.Exists(jsonFile) Then
-                Dim m = j.Deserialize(Of ModJson)(IO.File.ReadAllText(jsonFile))
+                Dim m = Json.Deserialize(Of ModJson)(IO.File.ReadAllText(jsonFile))
                 m.Filename = jsonFile
                 Mods.Add(m)
                 completed += 1

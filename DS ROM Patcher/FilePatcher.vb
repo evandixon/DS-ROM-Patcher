@@ -4,16 +4,19 @@ Imports SkyEditor.Core.Utilities
 
 Public Class FilePatcher
 
+    ''' <remarks>Returns an empty list if the file does not exist.</remarks>
     Public Shared Function DeserializePatcherList(patchersJsonFilename As String, toolsDirectory As String) As List(Of FilePatcher)
         Dim out As New List(Of FilePatcher)
-        For Each item In Json.DeserializeFromFile(Of List(Of FilePatcherJson))(patchersJsonFilename, New WindowsIOProvider)
-            out.Add(New FilePatcher(item, toolsDirectory))
-        Next
+        If File.Exists(patchersJsonFilename) Then
+            For Each item In Json.DeserializeFromFile(Of List(Of FilePatcherJson))(patchersJsonFilename, New WindowsIOProvider)
+                out.Add(New FilePatcher(item, toolsDirectory))
+            Next
+        End If
         Return out
     End Function
 
     Public Shared Sub SerializePatherListToFile(patchers As List(Of FilePatcher), filename As String, provider As WindowsIOProvider)
-        Dim jsons As List(Of FilePatcherJson) = patchers.Select(Function(x) x.SerializableInfo).ToList.Distinct
+        Dim jsons As List(Of FilePatcherJson) = patchers.Select(Function(x) x.SerializableInfo).Distinct.ToList
         Json.SerializeToFile(filename, jsons, provider)
     End Sub
 
@@ -64,6 +67,10 @@ Public Class FilePatcher
         For Each item In SerializableInfo.Dependencies.Concat({SerializableInfo.CreatePatchProgram, SerializableInfo.ApplyPatchProgram}).Distinct
             Dim source As String = Path.Combine(ToolsDirectory, item)
             Dim dest As String = Path.Combine(newToolsDir, item)
+
+            If Not Directory.Exists(Path.GetDirectoryName(dest)) Then
+                Directory.CreateDirectory(Path.GetDirectoryName(dest))
+            End If
 
             File.Copy(source, dest, True)
         Next
