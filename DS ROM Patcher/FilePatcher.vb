@@ -1,24 +1,45 @@
-﻿Public Class FilePatcher
+﻿Imports System.IO
+Imports Newtonsoft.Json
+Imports SkyEditor.Core.Utilities
 
-    Public Property FilePath As String
+Public Class FilePatcher
 
-    Public Property CreatePatchProgram As String
+    Public Shared Function DeserializePatcherList(patchersJsonFilename As String, toolsDirectory As String) As List(Of FilePatcher)
+        Dim out As New List(Of FilePatcher)
+        For Each item In Json.DeserializeFromFile(Of List(Of FilePatcherJson))(patchersJsonFilename, New WindowsIOProvider)
+            out.Add(New FilePatcher(item, toolsDirectory))
+        Next
+        Return out
+    End Function
 
-    ''' <summary>
-    ''' Arguments for the CreatePatchProgram.
-    ''' {0} is a placeholder for the original file, {1} is a placeholder for the updated file, and {2} is a placeholder for the output patch file.
-    ''' </summary>
-    ''' <returns></returns>
-    Public Property CreatePatchArguments As String
+    Public Shared Sub SerializePatherListToFile(patchers As List(Of FilePatcher), filename As String, provider As WindowsIOProvider)
+        Dim jsons As List(Of FilePatcherJson) = patchers.Select(Function(x) x.SerializableInfo).ToList
+        Json.SerializeToFile(filename, jsons, provider)
+    End Sub
 
-    Public Property ApplyPatchProgram As String
+    Public Sub New(serializableInfo As FilePatcherJson, toolsDirectory As String)
+        Me.SerializableInfo = serializableInfo
+        Me.ToolsDirectory = toolsDirectory
+    End Sub
 
-    ''' <summary>
-    ''' Arguments for the ApplyPatchProgram.
-    ''' {0} is a placeholder for the original file, {1} is a placeholder for the patch file, and {2} is a placeholder for the output file.
-    ''' </summary>
-    ''' <returns></returns>
-    Public Property ApplyPatchArguments As String
+    Public Property SerializableInfo As FilePatcherJson
 
-    Public Property PatchExtension As String
+    Public Property ToolsDirectory As String
+
+    Public Function GetCreatePatchProgramPath() As String
+        Return Path.Combine(ToolsDirectory, SerializableInfo.CreatePatchProgram)
+    End Function
+
+    Public Function GetApplyPatchProgramPath() As String
+        Return Path.Combine(ToolsDirectory, SerializableInfo.ApplyPatchProgram)
+    End Function
+
+    Public Sub CopyToolsToDirectory(newToolsDir As String)
+        For Each item In SerializableInfo.Dependencies.Concat({SerializableInfo.CreatePatchProgram, SerializableInfo.ApplyPatchProgram}).Distinct
+            Dim source As String = Path.Combine(ToolsDirectory, item)
+            Dim dest As String = Path.Combine(newToolsDir, item)
+
+            File.Copy(source, dest, True)
+        Next
+    End Sub
 End Class

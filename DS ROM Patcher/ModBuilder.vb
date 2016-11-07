@@ -295,7 +295,7 @@ Public Class ModBuilder
 
                                'Detect and use appropriate patching program
                                For Each patcher In CustomFilePatchers
-                                   Dim reg As New Regex(patcher.FilePath, RegexOptions.IgnoreCase)
+                                   Dim reg As New Regex(patcher.SerializableInfo.FilePath, RegexOptions.IgnoreCase)
                                    'Determine if there is a patcher that supports a file at the current path
                                    If reg.IsMatch(Item) Then
                                        'If so, add it to the list of patchers if it's not already there
@@ -306,13 +306,9 @@ Public Class ModBuilder
                                        '- Run the patcher
                                        Dim oldF As String = Path.Combine(originalDirectory, itemTrimmed)
                                        Dim newF As String = Path.Combine(modifiedDirectory, itemTrimmed)
-                                       Dim patchFile As String = Path.Combine(modTempFiles, itemTrimmed & "." & patcher.PatchExtension.Trim("*").Trim("."))
+                                       Dim patchFile As String = Path.Combine(modTempFiles, itemTrimmed & "." & patcher.SerializableInfo.PatchExtension.Trim("*").Trim("."))
 
-
-
-                                       Throw New NotImplementedException("Relative path must be converted into absolute path"
-
-                                       Await ProcessHelper.RunProgram(patcher.CreatePatchProgram, String.Format(patcher.CreatePatchArguments, oldF, newF, patchFile)).ConfigureAwait(False)
+                                       Await ProcessHelper.RunProgram(patcher.GetCreatePatchProgramPath, String.Format(patcher.SerializableInfo.CreatePatchArguments, oldF, newF, patchFile)).ConfigureAwait(False)
                                        patchMade = True
                                        Exit For 'Stop looking for patchers, we've found one
                                    End If
@@ -337,11 +333,11 @@ Public Class ModBuilder
         '- Copy the patchers
         For Each item In patchers
             If item IsNot Nothing Then
-                File.Copy(item.ApplyPatchProgram, IO.Path.Combine(modTempTools, IO.Path.GetFileName(item.ApplyPatchProgram)), True)
+                item.CopyToolsToDirectory(modTempTools)
             End If
         Next
         '- Serialize the list of patchers
-        Json.SerializeToFile(IO.Path.Combine(modTempTools, "patchers.json"), patchers, provider)
+        FilePatcher.SerializePatherListToFile(patchers, Path.Combine(modTempTools, "patchers.json"), provider)
 
         '- Zip Mod
         Zip.Zip(ModTempDir, outputModFilename)

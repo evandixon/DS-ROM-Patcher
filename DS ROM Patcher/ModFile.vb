@@ -1,17 +1,19 @@
-﻿Imports System.Web.Script.Serialization
+﻿Imports System.IO
+Imports SkyEditor.Core.Utilities
 
 Public Class ModFile
     Public Sub New(Filename As String)
-        Dim j As New JavaScriptSerializer
-        Me.ModDetails = j.Deserialize(Of ModJson)(IO.File.ReadAllText(Filename))
+        Dim provider As New WindowsIOProvider
+        Me.ModDetails = Json.DeserializeFromFile(Of ModJson)(Filename, provider)
         Me.Name = Me.ModDetails.Name
         Me.Patched = False
         Me.Filename = Filename
 
         'Load patchers.json
-        Dim patchersPath = IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Tools", "patchers.json")
+        Dim toolsDir = Path.Combine(Path.GetDirectoryName(Filename), "Tools")
+        Dim patchersPath = IO.Path.Combine(toolsDir, "patchers.json")
         If IO.File.Exists(patchersPath) Then
-            Me.ModLevelPatchers = j.Deserialize(Of List(Of FilePatcher))(IO.File.ReadAllText(patchersPath))
+            ModLevelPatchers = FilePatcher.DeserializePatcherList(patchersPath, toolsDir)
         End If
     End Sub
 
@@ -25,27 +27,27 @@ Public Class ModFile
         Dim renameTemp = IO.Path.Combine(currentDirectory, "Tools", "renametemp")
         If ModDetails.ToAdd IsNot Nothing Then
             For Each file In ModDetails.ToAdd
-                IO.File.Copy(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Files", file.Trim("\")), IO.Path.Combine(ROMDirectory, file.Trim("\")), True)
+                IO.File.Copy(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Files", file.Trim("\")), Path.Combine(ROMDirectory, file.Trim("\")), True)
             Next
         End If
 
         If ModDetails.ToUpdate IsNot Nothing Then
             For Each file In ModDetails.ToUpdate
-                If IO.File.Exists(IO.Path.Combine(ROMDirectory, file.TrimStart("\"))) Then
-                    Dim patches = IO.Directory.GetFiles(IO.Path.GetDirectoryName(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Files", file.Trim("\"))), IO.Path.GetFileName(file.Trim("\")) & "*")
+                If IO.File.Exists(Path.Combine(ROMDirectory, file.TrimStart("\"))) Then
+                    Dim patches = Directory.GetFiles(Path.GetDirectoryName(Path.Combine(Path.GetDirectoryName(Filename), "Files", file.Trim("\"))), Path.GetFileName(file.Trim("\")) & "*")
                     'Hopefully we only have 1 patch, but if there's more than 1 patch, apply them all.
                     For Each patchFile In patches
                         Dim possiblePatchers As New List(Of FilePatcher) ' = (From p In patchers Where p.PatchExtension = IO.Path.GetExtension(patchFile) Select p).ToList
                         'Load pack level patchers
-                        For Each p As FilePatcher In patchers
-                            If "." & p.PatchExtension = IO.Path.GetExtension(patchFile) Then
+                        For Each p In patchers
+                            If p.SerializableInfo.PatchExtension = Path.GetExtension(patchFile).Trim(".") Then
                                 possiblePatchers.Add(p)
                             End If
                         Next
 
                         'Load mod level patchers
-                        For Each p As FilePatcher In ModLevelPatchers
-                            If "." & p.PatchExtension = IO.Path.GetExtension(patchFile) Then
+                        For Each p In ModLevelPatchers
+                            If "." & p.SerializableInfo.PatchExtension = Path.GetExtension(patchFile) Then
                                 possiblePatchers.Add(p)
                             End If
                         Next
@@ -62,7 +64,7 @@ Public Class ModFile
                                 path = IO.Path.Combine(currentDirectory, "Tools", "Patchers")
                             End If
 
-                            Await ProcessHelper.RunProgram(IO.Path.Combine(path, possiblePatchers(0).ApplyPatchProgram), String.Format(possiblePatchers(0).ApplyPatchArguments, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), patchFile, tempFilename))
+                            Await ProcessHelper.RunProgram(possiblePatchers(0).GetApplyPatchProgramPath, String.Format(possiblePatchers(0).SerializableInfo.ApplyPatchArguments, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), patchFile, tempFilename))
 
                             If Not IO.File.Exists(tempFilename) Then
                                 MessageBox.Show("Unable to patch file """ & file & """.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")

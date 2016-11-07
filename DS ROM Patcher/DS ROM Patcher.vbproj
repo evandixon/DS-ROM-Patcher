@@ -94,7 +94,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -117,12 +116,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FilePatcher.vb" />
+    <Compile Include="FilePatcherJson.vb" />
     <Compile Include="Form2.Designer.vb">
       <DependentUpon>Form2.vb</DependentUpon>
     </Compile>
     <Compile Include="Form2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WindowsIOProvider.vb" />
     <Compile Include="Language.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

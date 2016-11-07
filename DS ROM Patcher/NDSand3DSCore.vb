@@ -1,6 +1,5 @@
 ﻿Imports System.IO
 Imports System.Text.RegularExpressions
-Imports System.Web.Script.Serialization
 
 Public Class NDSand3DSCore
     Inherits PatcherCore
@@ -14,18 +13,18 @@ Public Class NDSand3DSCore
     End Sub
 
     Public Overrides Async Function RunPatch(modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
-        Dim j As New JavaScriptSerializer
         Dim currentDirectory = Environment.CurrentDirectory
         Dim args = Environment.GetCommandLineArgs
-        Dim ROMDirectory = Path.Combine(currentDirectory, "Tools/dstemp")
-        Dim modTempDirectory = Path.Combine(currentDirectory, "Tools/modstemp")
+        Dim toolsDir = Path.Combine(currentDirectory, "Tools")
+        Dim ROMDirectory = Path.Combine(toolsDir, "dstemp")
+        Dim modTempDirectory = Path.Combine(toolsDir, "modstemp")
         Dim isDirectoryMode As Boolean = False
         Dim isHansMode As Boolean = False
         Dim isKey0CCIMode As Boolean = False
 
         Using c As New DotNet3dsToolkit.Converter
             'Extract the ROM
-            If IO.File.Exists(SelectedFilename) Then
+            If File.Exists(SelectedFilename) Then
                 RaiseProgressChanged(0, "Extracting the ROM...")
                 If Not IO.Directory.Exists(ROMDirectory) Then
                     IO.Directory.CreateDirectory(ROMDirectory)
@@ -55,7 +54,7 @@ Public Class NDSand3DSCore
             Const RepackMessage As String = "Applying the mods..."
             RaiseProgressChanged(1 / 3, RepackMessage)
 
-            Dim patchers = j.Deserialize(Of List(Of FilePatcher))(IO.File.ReadAllText(IO.Path.Combine(currentDirectory, "Tools", "patchers.json")))
+            Dim patchers = FilePatcher.DeserializePatcherList(Path.Combine(toolsDir, "patchers.json"), toolsDir)
             Dim modFiles As New List(Of ModFile)
             For Each item In mods
                 modFiles.Add(New ModFile(item.Filename))
