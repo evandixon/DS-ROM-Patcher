@@ -28,6 +28,11 @@
     Public Property ApplyPatchArguments As String
 
     ''' <summary>
+    ''' Whether or not multiple patches can be applied to the same file.
+    ''' </summary>
+    Public Property IsPatchMergeSafe As Boolean
+
+    ''' <summary>
     ''' Extension of the patch file
     ''' </summary>
     Public Property PatchExtension As String
@@ -46,7 +51,8 @@
                 Me.CreatePatchArguments = other.CreatePatchArguments AndAlso
                 Me.ApplyPatchProgram = other.ApplyPatchProgram AndAlso
                 Me.ApplyPatchArguments = other.ApplyPatchArguments AndAlso
-            Me.PatchExtension = other.PatchExtension AndAlso
+                Me.IsPatchMergeSafe = other.IsPatchMergeSafe AndAlso
+                Me.PatchExtension = other.PatchExtension AndAlso
                 Me.Dependencies.SequenceEqual(other.Dependencies)
         Else
             Return False
