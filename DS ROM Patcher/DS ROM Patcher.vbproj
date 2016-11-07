@@ -115,6 +115,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationEvents.vb" />
     <Compile Include="FilePatcher.vb" />
     <Compile Include="FilePatcherJson.vb" />
     <Compile Include="Form2.Designer.vb">

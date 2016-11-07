@@ -5,6 +5,16 @@ Imports ICSharpCode.SharpZipLib.Zip
 Imports SkyEditor.Core.Utilities
 
 Public Class Form2
+
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        Me.Text = String.Format("{0} Patcher v{1}", "DS", Assembly.GetExecutingAssembly.GetName.Version.ToString)
+        core = New NDSand3DSCore
+    End Sub
     Private WithEvents core As PatcherCore
     Private Property Mods As List(Of ModJson)
     Private Property Modpack As ModpackInfo
@@ -23,36 +33,49 @@ Public Class Form2
     Dim _isLoading As Boolean
 
     Private Async Sub Form2_Load(sender As Object, e As EventArgs) Handles Me.Load
-        Me.Text = String.Format("{0} Patcher v{1}", "DS", Assembly.GetExecutingAssembly.GetName.Version.ToString)
-        core = New NDSand3DSCore
-
-        'Unpack Mods
-        Dim currentDirectory = Environment.CurrentDirectory
-        Dim modTempDirectory = IO.Path.Combine(currentDirectory, "Tools/modstemp")
-        Modpack = Json.Deserialize(Of ModpackInfo)(File.ReadAllText(IO.Path.Combine(currentDirectory, "Mods", "Modpack Info")))
-
-        If Not IO.Directory.Exists(modTempDirectory) Then
-            IO.Directory.CreateDirectory(modTempDirectory)
-        End If
-
-        Dim modFiles = IO.Directory.GetFiles(IO.Path.Combine(currentDirectory, "Mods"), "*.mod", IO.SearchOption.TopDirectoryOnly)
         Dim completed As Integer = 0
 
-        lblStatus.Text = "Unpacking Mods..."
-        For Each item In modFiles
-            pbProgress.Value = completed / modFiles.Count
+        'Filenames
+        Dim currentDirectory = Environment.CurrentDirectory
+        Dim modTempDirectory = Path.Combine(currentDirectory, "Tools", "modstemp")
+        Dim modsDirectory = Path.Combine(currentDirectory, "Mods")
+        Dim modpackInfoFilename As String = Path.Combine(modsDirectory, "Modpack.json")
 
-            Dim z As New FastZip
-            If Not IO.Directory.Exists(IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item))) Then
-                IO.Directory.CreateDirectory(IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item)))
-            End If
-            z.ExtractZip(item, IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item)), ".*")
+        'Create directories
+        If Not Directory.Exists(modsDirectory) Then
+            Directory.CreateDirectory(modsDirectory)
+        End If
+        If Not Directory.Exists(modTempDirectory) Then
+            Directory.CreateDirectory(modTempDirectory)
+        End If
 
-            completed += 1
-        Next
+        'Load modpack info
+        If File.Exists(modpackInfoFilename) Then
+            Modpack = Json.Deserialize(Of ModpackInfo)(File.ReadAllText(modpackInfoFilename))
+        Else
+            Modpack = New ModpackInfo
+        End If
+
+        'Unpack Mods
+        If Directory.Exists(modsDirectory) Then
+            Dim modFiles = Directory.GetFiles(modsDirectory, "*.mod", SearchOption.TopDirectoryOnly)
+
+            lblStatus.Text = "Unpacking Mods..."
+            For Each item In modFiles
+                pbProgress.Value = completed / modFiles.Count
+
+                Dim z As New FastZip
+                If Not IO.Directory.Exists(IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item))) Then
+                    IO.Directory.CreateDirectory(IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item)))
+                End If
+                z.ExtractZip(item, IO.Path.Combine(modTempDirectory, IO.Path.GetFileNameWithoutExtension(item)), ".*")
+
+                completed += 1
+            Next
+        End If
 
         'Load Mods
-        Dim modDirs = IO.Directory.GetDirectories(modTempDirectory, "*", IO.SearchOption.TopDirectoryOnly)
+        Dim modDirs = Directory.GetDirectories(modTempDirectory, "*", IO.SearchOption.TopDirectoryOnly)
         Dim total As Integer = modDirs.Count
         Mods = New List(Of ModJson)
 
@@ -75,7 +98,7 @@ Public Class Form2
 
         lblStatus.Text = "Ready"
 
-        'Auto-patch
+        'Auto-patch, if applicable
         Dim args = Environment.GetCommandLineArgs
         If args.Count > 2 Then
             btnBrowse.Enabled = False
@@ -96,6 +119,24 @@ Public Class Form2
             Me.Close()
         End If
     End Sub
+
+#Region "Menu Event Handlers"
+    Private Sub ImportPatcherPackToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ImportPatcherPackToolStripMenuItem.Click
+        Dim o As New OpenFileDialog
+        o.Filter = $"{My.Resources.Language.PatcherPack}|*.dsrppp;*.zip|{My.Resources.Language.AllFiles}|*.*"
+        If o.ShowDialog = DialogResult.OK Then
+            FilePatcher.ImportCurrentPatcherPack(o.FileName)
+        End If
+    End Sub
+
+    Private Sub ExportPatcherPackToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExportPatcherPackToolStripMenuItem.Click
+        Dim s As New SaveFileDialog
+        s.Filter = $"{My.Resources.Language.PatcherPack}|*.dsrppp;*.zip|{My.Resources.Language.AllFiles}|*.*"
+        If s.ShowDialog = DialogResult.OK Then
+            FilePatcher.ExportCurrentPatcherPack(s.FileName)
+        End If
+    End Sub
+#End Region
 
     Private Async Sub btnBrowse_Click(sender As Object, e As EventArgs) Handles btnBrowse.Click
         core.PromptFilePath()
@@ -149,4 +190,9 @@ Public Class Form2
             pbProgress.Value = e.Progress * 100
         End If
     End Sub
+
+    Private Sub chbDesignMode_CheckedChanged(sender As Object, e As EventArgs) Handles chbDesignMode.CheckedChanged
+        menuMain.Visible = chbDesignMode.Checked
+    End Sub
+
 End Class

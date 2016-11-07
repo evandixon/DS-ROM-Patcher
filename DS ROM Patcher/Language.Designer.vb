@@ -65,6 +65,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to All Files.
+        '''</summary>
+        Friend Shared ReadOnly Property AllFiles() As String
+            Get
+                Return ResourceManager.GetString("AllFiles", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to Complete.
         '''</summary>
         Friend Shared ReadOnly Property Complete() As String
@@ -106,6 +115,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property LoadingGeneratingPatch() As String
             Get
                 Return ResourceManager.GetString("LoadingGeneratingPatch", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Patcher Pack.
+        '''</summary>
+        Friend Shared ReadOnly Property PatcherPack() As String
+            Get
+                Return ResourceManager.GetString("PatcherPack", resourceCulture)
             End Get
         End Property
     End Class
