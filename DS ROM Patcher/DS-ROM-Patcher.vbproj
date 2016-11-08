@@ -115,6 +115,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analysis\ModAnalysisException.vb" />
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Forms\CreateModWindow.Designer.vb">
       <DependentUpon>CreateModWindow.vb</DependentUpon>
@@ -130,15 +131,15 @@
     <Compile Include="Forms\Form2.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ModAnalysisResult.vb" />
-    <Compile Include="ModpackAnalysisResult.vb" />
+    <Compile Include="Analysis\ModAnalysisResult.vb" />
+    <Compile Include="Analysis\ModpackAnalysisResult.vb" />
     <Compile Include="Forms\ModpackMetadataWindow.Designer.vb">
       <DependentUpon>ModpackMetadataWindow.vb</DependentUpon>
     </Compile>
     <Compile Include="Forms\ModpackMetadataWindow.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FilePatchAnalysisResult.vb" />
+    <Compile Include="Analysis\FilePatchAnalysisResult.vb" />
     <Compile Include="Utilities\WindowsIOProvider.vb" />
     <Compile Include="Language.Designer.vb">
       <AutoGen>True</AutoGen>
