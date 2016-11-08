@@ -117,8 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="xdelta3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\xdelta3.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="AllFiles" xml:space="preserve">
+    <value>All Files</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="LoadingAnalzingFiles" xml:space="preserve">
+    <value>Analyzing files...</value>
+  </data>
+  <data name="LoadingComparingFiles" xml:space="preserve">
+    <value>Comparing files...</value>
+  </data>
+  <data name="LoadingComputingHashes" xml:space="preserve">
+    <value>Computing hashes...</value>
+  </data>
+  <data name="LoadingGeneratingPatch" xml:space="preserve">
+    <value>Generating patch...</value>
+  </data>
+  <data name="PatcherPack" xml:space="preserve">
+    <value>Patcher Pack</value>
+  </data>
+  <data name="SupportedROMs" xml:space="preserve">
+    <value>Supported ROMs</value>
   </data>
 </root>
