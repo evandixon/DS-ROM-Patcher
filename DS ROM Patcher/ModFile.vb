@@ -24,8 +24,85 @@ Public Class ModFile
     Public Property Patched As Boolean
     Public Property Filename As String
     Public Property ModLevelPatchers As List(Of FilePatcher)
+    Private ReadOnly Property FilesPath As String
+        Get
+            Return Path.Combine(Path.GetDirectoryName(Filename), "Files")
+        End Get
+    End Property
+
+
+    ''' <summary>
+    ''' 
+    ''' </summary>
+    ''' <param name="modpackDirectory"></param>
+    ''' <param name="romDirectory"></param>
+    ''' <param name="patchers"></param>
+    ''' <returns></returns>
+    Public Function AnalyzeMod(modpackDirectory As String, romDirectory As String, patchers As List(Of FilePatcher)) As ModAnalysisResult
+        Dim modResult As New ModAnalysisResult
+
+        'Update analysis
+        If ModDetails.ToUpdate IsNot Nothing Then
+            For Each file In ModDetails.ToUpdate
+                Dim fileTrimmed As String = file.TrimStart("\")
+                If IO.File.Exists(Path.Combine(romDirectory, fileTrimmed)) Then
+                    Dim fileResults As New FilePatchAnalysisResult
+                    fileResults.SourceFile = fileTrimmed
+
+                    Dim patches = Directory.GetFiles(Path.GetDirectoryName(Path.Combine(filesPath, fileTrimmed)), Path.GetFileName(fileTrimmed) & "*")
+
+                    For Each patchFile In patches
+                        Dim relativePath As String = patchFile.Replace(filesPath, "").TrimStart("\")
+                        Dim possiblePatchers As New List(Of FilePatcher) ' = (From p In patchers Where p.PatchExtension = IO.Path.GetExtension(patchFile) Select p).ToList
+                        Dim chosenPatcher As FilePatcher
+                        Dim isPatcherChosen As Boolean
+                        'Load pack level patchers
+                        For Each p In patchers
+                            If p.SerializableInfo.PatchExtension = Path.GetExtension(patchFile).Trim(".") Then
+                                possiblePatchers.Add(p)
+                            End If
+                        Next
+
+                        'Load mod level patchers
+                        For Each p In ModLevelPatchers
+                            If "." & p.SerializableInfo.PatchExtension = Path.GetExtension(patchFile) Then
+                                possiblePatchers.Add(p)
+                            End If
+                        Next
+
+                        If possiblePatchers.Count = 0 Then
+                            If Path.GetExtension(patchFile) = ".xdelta" Then
+                                chosenPatcher = Nothing
+                                isPatcherChosen = True
+                            Else
+                                'Do nothing, we don't have the tools to deal with this patch
+                                isPatcherChosen = False
+                                chosenPatcher = Nothing
+                            End If
+                        ElseIf possiblePatchers.Count >= 1 Then
+                            chosenPatcher = possiblePatchers.First
+                            isPatcherChosen = True
+                        Else
+                            Throw New Exception("possiblePatchers has a count that's less than 0.")
+                        End If
+
+                        If isPatcherChosen Then
+                            fileResults.Patches.Add(relativePath, chosenPatcher)
+                        Else
+                            fileResults.MissingPatchers.Add(relativePath)
+                        End If
+
+                    Next
+
+                    modResult.Files.Add(fileResults)
+                End If
+            Next
+        End If
+        Return modResult
+    End Function
 
     Public Async Function ApplyPatch(currentDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
+        Dim analysis = AnalyzeMod(currentDirectory, ROMDirectory, patchers)
         Using xdelta As New xdelta
             Dim renameTemp = IO.Path.Combine(currentDirectory, "Tools", "renametemp")
             If ModDetails.ToAdd IsNot Nothing Then
@@ -35,61 +112,30 @@ Public Class ModFile
             End If
 
             If ModDetails.ToUpdate IsNot Nothing Then
-                For Each file In ModDetails.ToUpdate
-                    If IO.File.Exists(Path.Combine(ROMDirectory, file.TrimStart("\"))) Then
-                        Dim patches = Directory.GetFiles(Path.GetDirectoryName(Path.Combine(Path.GetDirectoryName(Filename), "Files", file.Trim("\"))), Path.GetFileName(file.Trim("\")) & "*")
-                        'Hopefully we only have 1 patch, but if there's more than 1 patch, apply them all.
-                        For Each patchFile In patches
-                            Dim possiblePatchers As New List(Of FilePatcher) ' = (From p In patchers Where p.PatchExtension = IO.Path.GetExtension(patchFile) Select p).ToList
-                            'Load pack level patchers
-                            For Each p In patchers
-                                If p.SerializableInfo.PatchExtension = Path.GetExtension(patchFile).Trim(".") Then
-                                    possiblePatchers.Add(p)
-                                End If
-                            Next
+                For Each fileAnalysis In analysis.Files
+                    Dim sourceFile = fileAnalysis.SourceFile
+                    For Each patch In fileAnalysis.Patches
+                        Dim patchFile = Path.Combine(FilesPath, patch.Key)
+                        Dim patcher = patch.Value
+                        Dim tempFilename As String = Path.Combine(currentDirectory, "Tools", "tempFile")
 
-                            'Load mod level patchers
-                            For Each p In ModLevelPatchers
-                                If "." & p.SerializableInfo.PatchExtension = Path.GetExtension(patchFile) Then
-                                    possiblePatchers.Add(p)
-                                End If
-                            Next
+                        'Run the patcher
+                        If patcher Is Nothing Then
+                            'Patch with XDelta
+                            Await xdelta.ApplyPatch(Path.Combine(ROMDirectory, sourceFile), patchFile, tempFilename)
+                        Else
+                            'Patch with given patcher
+                            Await ProcessHelper.RunProgram(patcher.GetApplyPatchProgramPath, String.Format(patcher.SerializableInfo.ApplyPatchArguments, IO.Path.Combine(ROMDirectory, sourceFile), patchFile, tempFilename))
+                        End If
 
-                            If possiblePatchers.Count = 0 Then
-                                If Path.GetExtension(patchFile) = ".xdelta" Then
-                                    Dim tempFilename As String = IO.Path.Combine(currentDirectory, "Tools", "tempFile")
-                                    Await xdelta.ApplyPatch(IO.Path.Combine(ROMDirectory, file.TrimStart("\")), patchFile, tempFilename)
-                                    If Not IO.File.Exists(tempFilename) Then
-                                        MessageBox.Show("Unable to patch file """ & file & """ with xdelta.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")
-                                    Else
-                                        IO.File.Copy(tempFilename, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), True)
-                                        IO.File.Delete(tempFilename)
-                                    End If
-                                Else
-                                    'Do nothing, we don't have the tools to deal with this patch
-                                    'Todo: notify user somehow
-                                End If
-                            ElseIf possiblePatchers.Count >= 1 Then
-                                Dim tempFilename As String = IO.Path.Combine(currentDirectory, "Tools", "tempFile")
-                                'If there's 1 possible patcher, great.  If there's more than one, then multiple programs have the same extension, which is their fault.  Only using the first one because we don't need to apply the same patch multiple times.
-                                Dim path As String
-                                If ModLevelPatchers.Contains(possiblePatchers(0)) Then
-                                    path = IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Tools")
-                                Else
-                                    path = IO.Path.Combine(currentDirectory, "Tools", "Patchers")
-                                End If
-
-                                Await ProcessHelper.RunProgram(possiblePatchers(0).GetApplyPatchProgramPath, String.Format(possiblePatchers(0).SerializableInfo.ApplyPatchArguments, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), patchFile, tempFilename))
-
-                                If Not IO.File.Exists(tempFilename) Then
-                                    MessageBox.Show("Unable to patch file """ & file & """.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")
-                                Else
-                                    IO.File.Copy(tempFilename, IO.Path.Combine(ROMDirectory, file.TrimStart("\")), True)
-                                    IO.File.Delete(tempFilename)
-                                End If
-                            End If
-                        Next
-                    End If
+                        'Copy temp file to target location
+                        If Not IO.File.Exists(tempFilename) Then
+                            MessageBox.Show("Unable to patch file """ & sourceFile & """.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")
+                        Else
+                            File.Copy(tempFilename, IO.Path.Combine(ROMDirectory, sourceFile), True)
+                            File.Delete(tempFilename)
+                        End If
+                    Next
                 Next
             End If
 
@@ -147,6 +193,19 @@ Public Class ModFile
                 Next
             End If
         End If
+    End Function
+
+    ''' <summary>
+    ''' Applies patches to a directory.
+    ''' </summary>
+    ''' <param name="mods">The mods to apply.</param>
+    ''' <param name="patchers">The modpack-level patchers used to apply patches.</param>
+    ''' <param name="modpackDirectory">The directory of the modpack.  This is <see cref="Environment.CurrentDirectory"/> if called from the DS-ROM-Patcher.</param>
+    ''' <param name="romDirectory">The unpacked ROM.</param>
+    Public Shared Async Function ApplyPatches(mods As List(Of ModFile), patchers As List(Of FilePatcher), modpackDirectory As String, romDirectory As String) As Task
+        For Each item In mods
+            Await ModFile.ApplyPatch(mods, item, modpackDirectory, romDirectory, patchers)
+        Next
     End Function
 
     Public Shared Sub CopyFile(OriginalFilename As String, NewFilename As String, Overwrite As Boolean)

@@ -130,12 +130,15 @@
     <Compile Include="Form2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ModAnalysisResult.vb" />
+    <Compile Include="ModpackAnalysisResult.vb" />
     <Compile Include="ModpackMetadataWindow.Designer.vb">
       <DependentUpon>ModpackMetadataWindow.vb</DependentUpon>
     </Compile>
     <Compile Include="ModpackMetadataWindow.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FilePatchAnalysisResult.vb" />
     <Compile Include="WindowsIOProvider.vb" />
     <Compile Include="Language.Designer.vb">
       <AutoGen>True</AutoGen>

@@ -126,11 +126,11 @@ Public Class Form2
                 End If
             Next
 
-            Dim items As New List(Of ModJson)
-            For Each item In chbMods.CheckedItems
-                items.Add(item)
+            Dim items As New List(Of ModFile)
+            For Each item As ModJson In chbMods.CheckedItems
+                items.Add(New ModFile(item.Filename))
             Next
-            Await core.RunPatch(Modpack, items, args(2))
+            Await core.RunPatch(Patchers, Modpack, items, args(2))
 
             Me.Close()
         End If
@@ -217,11 +217,11 @@ Public Class Form2
     Private Async Sub btnPatch_Click(sender As Object, e As EventArgs) Handles btnPatch.Click
         IsLoading = True
 
-        Dim items As New List(Of ModJson)
-        For Each item In chbMods.CheckedItems
-            items.Add(item)
+        Dim items As New List(Of ModFile)
+        For Each item As ModJson In chbMods.CheckedItems
+            items.Add(New ModFile(item.Filename))
         Next
-        Await core.RunPatch(Modpack, items)
+        Await core.RunPatch(Patchers, Modpack, items)
 
         IsLoading = False
     End Sub
