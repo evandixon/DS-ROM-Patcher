@@ -28,13 +28,17 @@ Public Class xdelta
     Dim _xDeltaPath As String
 
     Public Async Function CreatePatch(oldFilename As String, newFilename As String, patchFile As String) As Task
-        Dim oldFileTemp As String = Path.Combine(XDeltaDirectory, $"oldFile.bin")
-        Dim newFileTemp As String = Path.Combine(XDeltaDirectory, $"newFile.bin")
-        Dim deltaFileTemp As String = Path.Combine(XDeltaDirectory, $"patch.xdelta")
+        Dim oldFileTemp As String = Path.Combine(XDeltaDirectory, "oldFile.bin")
+        Dim newFileTemp As String = Path.Combine(XDeltaDirectory, "newFile.bin")
+        Dim deltaFileTemp As String = Path.Combine(XDeltaDirectory, "patch.xdelta")
         File.Copy(oldFilename, oldFileTemp, True)
         File.Copy(newFilename, newFileTemp, True)
-        Await ProcessHelper.RunProgram(XDeltaPath, String.Format("-e -s ""{0}"" ""{1}"" ""{2}""", $"oldFile.bin", $"newFile.bin", $"patch.xdelta")).ConfigureAwait(False)
+        Await ProcessHelper.RunProgram(XDeltaPath, String.Format("-e -s ""{0}"" ""{1}"" ""{2}""", "oldFile.bin", "newFile.bin", "patch.xdelta")).ConfigureAwait(False)
         File.Copy(deltaFileTemp, patchFile, True)
+    End Function
+
+    Public Async Function ApplyPatch(oldFilename As String, patchFile As String, newFilename As String) As Task
+        Await ProcessHelper.RunProgram(XDeltaPath, String.Format("-d -n -s ""{0}"" ""{1}"" ""{2}""", oldFilename, patchFile, newFilename)).ConfigureAwait(False)
     End Function
 
 #Region "IDisposable Support"

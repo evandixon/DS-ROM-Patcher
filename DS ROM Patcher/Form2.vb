@@ -36,6 +36,7 @@ Public Class Form2
     'Filenames
     Dim currentDirectory = Environment.CurrentDirectory
     Dim modTempDirectory = Path.Combine(currentDirectory, "Tools", "modstemp")
+    Dim unpackTempDirectory = Path.Combine(currentDirectory, "Tools", "dstemp")
     Dim modsDirectory = Path.Combine(currentDirectory, "Mods")
     Dim modpackInfoFilename As String = Path.Combine(modsDirectory, "Modpack.json")
 
@@ -48,6 +49,11 @@ Public Class Form2
         End If
         If Not Directory.Exists(modTempDirectory) Then
             Directory.CreateDirectory(modTempDirectory)
+        End If
+
+        'Delete old directories (in case the program crashed earlier)
+        If Directory.Exists(unpackTempDirectory) Then
+            Directory.Delete(unpackTempDirectory, True)
         End If
 
         'Load modpack info
@@ -187,7 +193,9 @@ Public Class Form2
         core.PromptFilePath()
         txtInput.Text = core.SelectedFilename
 
-        Await RefreshModList()
+        If Not String.IsNullOrEmpty(txtInput.Text) Then
+            Await RefreshModList()
+        End If
     End Sub
 
     Private Async Function RefreshModList() As Task
