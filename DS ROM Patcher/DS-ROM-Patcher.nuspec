@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
-    <id>DSPatcher</id>
+    <id>DS-ROM-Patcher</id>
     <version>$version$</version>
     <title>DS ROM Patcher</title>
     <authors>evandixon</authors>
