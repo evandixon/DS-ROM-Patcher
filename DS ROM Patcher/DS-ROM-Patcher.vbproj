@@ -116,30 +116,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationEvents.vb" />
-    <Compile Include="CreateModWindow.Designer.vb">
+    <Compile Include="Forms\CreateModWindow.Designer.vb">
       <DependentUpon>CreateModWindow.vb</DependentUpon>
     </Compile>
-    <Compile Include="CreateModWindow.vb">
+    <Compile Include="Forms\CreateModWindow.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FilePatcher.vb" />
     <Compile Include="FilePatcherJson.vb" />
-    <Compile Include="Form2.Designer.vb">
+    <Compile Include="Forms\Form2.Designer.vb">
       <DependentUpon>Form2.vb</DependentUpon>
     </Compile>
-    <Compile Include="Form2.vb">
+    <Compile Include="Forms\Form2.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ModAnalysisResult.vb" />
     <Compile Include="ModpackAnalysisResult.vb" />
-    <Compile Include="ModpackMetadataWindow.Designer.vb">
+    <Compile Include="Forms\ModpackMetadataWindow.Designer.vb">
       <DependentUpon>ModpackMetadataWindow.vb</DependentUpon>
     </Compile>
-    <Compile Include="ModpackMetadataWindow.vb">
+    <Compile Include="Forms\ModpackMetadataWindow.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FilePatchAnalysisResult.vb" />
-    <Compile Include="WindowsIOProvider.vb" />
+    <Compile Include="Utilities\WindowsIOProvider.vb" />
     <Compile Include="Language.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -166,14 +166,14 @@
     </Compile>
     <Compile Include="NDSand3DSCore.vb" />
     <Compile Include="PatcherCore.vb" />
-    <Compile Include="ProcessHelper.vb" />
-    <Compile Include="xdelta.vb" />
+    <Compile Include="Utilities\ProcessHelper.vb" />
+    <Compile Include="Utilities\xdelta.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CreateModWindow.resx">
+    <EmbeddedResource Include="Forms\CreateModWindow.resx">
       <DependentUpon>CreateModWindow.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form2.resx">
+    <EmbeddedResource Include="Forms\Form2.resx">
       <DependentUpon>Form2.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Language.resx">
@@ -181,7 +181,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Language.Designer.vb</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="ModpackMetadataWindow.resx">
+    <EmbeddedResource Include="Forms\ModpackMetadataWindow.resx">
       <DependentUpon>ModpackMetadataWindow.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">

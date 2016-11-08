@@ -1,4 +1,6 @@
 ﻿Imports System.IO
+Imports DS_ROM_Patcher.Utilities
+Imports DS_ROM_Patcher.Utilties
 Imports SkyEditor.Core.Utilities
 
 Public Class ModFile
@@ -49,10 +51,10 @@ Public Class ModFile
                     Dim fileResults As New FilePatchAnalysisResult
                     fileResults.SourceFile = fileTrimmed
 
-                    Dim patches = Directory.GetFiles(Path.GetDirectoryName(Path.Combine(filesPath, fileTrimmed)), Path.GetFileName(fileTrimmed) & "*")
+                    Dim patches = Directory.GetFiles(Path.GetDirectoryName(Path.Combine(FilesPath, fileTrimmed)), Path.GetFileName(fileTrimmed) & "*")
 
                     For Each patchFile In patches
-                        Dim relativePath As String = patchFile.Replace(filesPath, "").TrimStart("\")
+                        Dim relativePath As String = patchFile.Replace(FilesPath, "").TrimStart("\")
                         Dim possiblePatchers As New List(Of FilePatcher) ' = (From p In patchers Where p.PatchExtension = IO.Path.GetExtension(patchFile) Select p).ToList
                         Dim chosenPatcher As FilePatcher
                         Dim isPatcherChosen As Boolean
@@ -174,7 +176,7 @@ Public Class ModFile
             'Patch depencencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
                 For Each item In ModFile.ModDetails.DependenciesBefore
-                    Dim q = From m In Mods Where m.id = item AndAlso Not String.IsNullOrEmpty(m.id)
+                    Dim q = From m In Mods Where m.ID = item AndAlso Not String.IsNullOrEmpty(m.ID)
 
                     For Each d In q
                         Await ApplyPatch(Mods, d, currentDirectory, ROMDirectory, patchers)
@@ -185,7 +187,7 @@ Public Class ModFile
             'Patch dependencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
                 For Each item In ModFile.ModDetails.DependenciesAfter
-                    Dim q = From m In Mods Where m.id = item AndAlso Not String.IsNullOrEmpty(m.id)
+                    Dim q = From m In Mods Where m.ID = item AndAlso Not String.IsNullOrEmpty(m.ID)
 
                     For Each d In q
                         Await ApplyPatch(Mods, d, currentDirectory, ROMDirectory, patchers)

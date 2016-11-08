@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
 Imports System.Reflection
+Imports DS_ROM_Patcher.Utilties
 Imports ICSharpCode.SharpZipLib.Zip
 Imports SkyEditor.Core.Utilities
 
