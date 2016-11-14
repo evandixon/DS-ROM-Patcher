@@ -39,7 +39,6 @@ Partial Class Form2
         Me.ExportPatcherPackToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ModsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CreateModToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.chbDesignMode = New System.Windows.Forms.CheckBox()
         Me.EditMetadataToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.GroupBox1.SuspendLayout()
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -65,7 +64,6 @@ Partial Class Form2
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtInput.Location = New System.Drawing.Point(50, 29)
         Me.txtInput.Name = "txtInput"
-        Me.txtInput.ReadOnly = True
         Me.txtInput.Size = New System.Drawing.Size(311, 20)
         Me.txtInput.TabIndex = 1
         '
@@ -166,7 +164,6 @@ Partial Class Form2
         Me.menuMain.Size = New System.Drawing.Size(457, 24)
         Me.menuMain.TabIndex = 9
         Me.menuMain.Text = "MenuStrip1"
-        Me.menuMain.Visible = False
         '
         'FileToolStripMenuItem
         '
@@ -197,24 +194,13 @@ Partial Class Form2
         'CreateModToolStripMenuItem
         '
         Me.CreateModToolStripMenuItem.Name = "CreateModToolStripMenuItem"
-        Me.CreateModToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.CreateModToolStripMenuItem.Size = New System.Drawing.Size(147, 22)
         Me.CreateModToolStripMenuItem.Text = "&Create Mod"
-        '
-        'chbDesignMode
-        '
-        Me.chbDesignMode.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.chbDesignMode.AutoSize = True
-        Me.chbDesignMode.Location = New System.Drawing.Point(353, 319)
-        Me.chbDesignMode.Name = "chbDesignMode"
-        Me.chbDesignMode.Size = New System.Drawing.Size(89, 17)
-        Me.chbDesignMode.TabIndex = 10
-        Me.chbDesignMode.Text = "Design Mode"
-        Me.chbDesignMode.UseVisualStyleBackColor = True
         '
         'EditMetadataToolStripMenuItem
         '
         Me.EditMetadataToolStripMenuItem.Name = "EditMetadataToolStripMenuItem"
-        Me.EditMetadataToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.EditMetadataToolStripMenuItem.Size = New System.Drawing.Size(147, 22)
         Me.EditMetadataToolStripMenuItem.Text = "&Edit Metadata"
         '
         'Form2
@@ -222,7 +208,6 @@ Partial Class Form2
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(457, 370)
-        Me.Controls.Add(Me.chbDesignMode)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.menuMain)
         Me.Controls.Add(Me.btnPatch)
@@ -261,7 +246,6 @@ Partial Class Form2
     Friend WithEvents lblStatus As ToolStripStatusLabel
     Friend WithEvents menuMain As MenuStrip
     Friend WithEvents FileToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents chbDesignMode As CheckBox
     Friend WithEvents ImportPatcherPackToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ExportPatcherPackToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ModsToolStripMenuItem As ToolStripMenuItem

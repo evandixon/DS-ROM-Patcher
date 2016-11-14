@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A457E13A-C9DC-432A-BEB9-D04291DBD637}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>DS_ROM_Patcher.My.MyApplication</StartupObject>
+    <StartupObject>DS_ROM_Patcher.Program</StartupObject>
     <RootNamespace>DS_ROM_Patcher</RootNamespace>
     <AssemblyName>DSPatcher</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>WindowsForms</MyType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -116,7 +116,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Analysis\ModAnalysisException.vb" />
-    <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Forms\CreateModWindow.Designer.vb">
       <DependentUpon>CreateModWindow.vb</DependentUpon>
     </Compile>
@@ -146,6 +145,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Analysis\FilePatchAnalysisResult.vb" />
+    <Compile Include="Program.vb" />
     <Compile Include="Utilities\WindowsIOProvider.vb" />
     <Compile Include="Language.Designer.vb">
       <AutoGen>True</AutoGen>

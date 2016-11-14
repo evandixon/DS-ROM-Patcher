@@ -249,8 +249,4 @@ Public Class Form2
         End If
     End Sub
 
-    Private Sub chbDesignMode_CheckedChanged(sender As Object, e As EventArgs) Handles chbDesignMode.CheckedChanged
-        menuMain.Visible = chbDesignMode.Checked
-    End Sub
-
 End Class
