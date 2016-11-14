@@ -44,29 +44,28 @@ Modpack creation is still under construction, but can be done, albeit more manua
 	* System is exactly what it says on the tin: the system on which the game you're modding runs.  Supported values are `3DS` and `NDS`.
 	* Game code is a regular expression that matches the game code of any supported game.  For 3DS games, this is the 16 digit title ID.  For NDS games, this is the 4 letter game code.
  4. Use Modpack -> Create Mod.  Follow the below steps and repeat for every mod you wish to create.
- 
-  	 A. Browse to the original ROM.
-  	 B. Browse to the modified ROM.
-  	 C. Fill in metadata.
+ 	 1. Browse to the original ROM.
+  	 2. Browse to the modified ROM.
+  	 3. Fill in metadata.
 		* ID is any arbitrary string that can differentiate this mod from any others for a particular game.  Try to make it user-friendly, since other modpack creators may use it.
 		* Friendly name is the name of the mod users will see when applying the modpack.
 		* Author is whomever made the changes to the ROM.
 		* Description is exactly what it says on the tin: Describe how the ROM will be different after applying this mod.
 		* Version is a string differentiating _this_ build of the mod that may have been made.  There's no rules for this, just try to ensure it makes logical sense.
 		* Dependencies are a semi-colon separated list of the IDs of mods that need to be applied before or after this one.  Unless you're making a mod of another mod (and the mod was applied to the source ROM to which you've browsed), leave these blank.
-  	 D. Choose additional mod creation options.
+  	 4. Choose additional mod creation options.
 		* Enable Adds will add any file that's in the modified ROM but not the source ROM to the mod in its entirety.  Leave this checked if you want to add files to the ROM.
 		* Enable Deletes will delete any file from a ROM if it's in the source ROM but not the modified ROM.  Leave this unchecked unless you really want to delete files from the ROM.
-  	 E. Click Create, and wait for the dialog to go away.
+  	 5. Click Create, and wait for the dialog to go away.
  5. Create the modpack.  There is currently no GUI to do this, so you'll have to do things yourself.
-	 A. Close the form.
-	 B. Browse to the directory the program is in.
-	 C. Open "Tools".
-	 D. Delete the following folders if the exist: 
+	 1. Close the form.
+	 2. Browse to the directory the program is in.
+	 3. Open "Tools".
+	 4. Delete the following folders if the exist: 
 		* dstemp
 		* modstemp
-	 E. Go back to the directory the program is in.
-	 F. Create a new zip file containing all the files and directories within.  To keep things standard, *only* use a zip file, because external programs may apply this modpack.  It is against the license of this program to use other archive formats without explicit written permission.
+	 5. Go back to the directory the program is in.
+	 6. Create a new zip file containing all the files and directories within.  To keep things standard, *only* use a zip file, because external programs may apply this modpack.  It is against the license of this program to use other archive formats without explicit written permission.
 	
 ## System requirements
 * .Net Framework 4.6
