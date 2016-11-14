@@ -1,16 +1,20 @@
 # DS ROM Patcher
 Normaly, distributing ROM hacks for NDS ROMs involves an XDelta patch applied to the entire ROM.  3DS hacks usually involves tedious ROM extraction and file replacement.  Patches applied to the ROM as a whole do not support multiple regions of games, and tedious ROM extraction and file replacement is a chore.  DS ROM Patcher aims to fix that.
+
 ## Concepts and terminology
 ### Patch
 A patch is the data needed to alter a file without distributing the altered version in its entirety.  Certain kinds of patches might be merge-safe, meaning that multiple patches from multiple mods can be applied to the same file.
+
 ### Mod
 A mod is a group of file patches that intend to change something about a game.  Examples of mods:
-- Removing the border lines in Pokémon games
-- Changing the moves TMs teach in Pokémon games
-- Altering Pokémon spawns
-- Altering Pokémon level progression and other balance concerns
+- Removing the border lines in PokÃ©mon games
+- Changing the moves TMs teach in PokÃ©mon games
+- Altering PokÃ©mon spawns
+- Altering PokÃ©mon level progression and other balance concerns
+
 ### Modpack
 A modpack is a collection of mods for a particular game, in addition to the tools required to apply them.
+
 ## Usage
 ### Applying a Modpack (GUI)
 Applying a modpack is designed to be as user-friendly as possible.  Following these steps will result in a modified ROM being created.
@@ -19,11 +23,13 @@ Applying a modpack is designed to be as user-friendly as possible.  Following th
 3. For "Input", choose a ROM compatible with the modpack.
 4. Compatible mods will be listed and can be checked or unchecked as desired.
 5. Click "Patch" and respond to any prompts.
+
 ### Applying a Modpack (Automatic)
 Modpacks are designed to be applied using automated tools.  Using DSPatcher.exe as a code library for applying modpacks is semi-supported, but the general process for calling it is as follows:
 1. Extract the distribution zip file.
 2. Execute the process `DSPatcher.exe <Source ROM> <Output ROM> [-hans]`
 3. Wait for the process to complete, and <Output ROM> will be the altered version of <Source ROM>
+
 ### Creating a Modpack
 Modpack creation is still under construction, but can be done, albeit more manual steps than ideal.  Following these steps will result in a zip file that contains everything needed to apply your ROM hack, with the exception of the .Net Framework 4.6.
 1. Extract the zip file from the latest Github release.
@@ -60,8 +66,10 @@ Modpack creation is still under construction, but can be done, albeit more manua
 		* modstemp
 	E. Go back to the directory the program is in.
 	F. Create a new zip file containing all the files and directories within.  To keep things standard, *only* use a zip file, because external programs may apply this modpack.  It is against the license of this program to use other archive formats without explicit written permission.
+	
 ## System requirements
 * .Net Framework 4.6
+
 ## Planned Features:
 * Easier-to-use UI for creating modpacks.
 * Patch collision detection to warn the user of conflicting mods before attempting to apply them.
