@@ -20,9 +20,9 @@ Public Class FilePatcher
         Json.SerializeToFile(filename, jsons, provider)
     End Sub
 
-    Public Shared Sub ImportCurrentPatcherPack(patcherZipFilename As String)
+    Public Shared Sub ImportCurrentPatcherPack(patcherZipFilename As String, modpackDirectory As string)
         'Open existing patchers
-        Dim patchersDir = Path.Combine(Environment.CurrentDirectory, "Tools", "Patchers")
+        Dim patchersDir = Path.Combine(modpackDirectory, "Tools", "Patchers")
         Dim patchersFile = Path.Combine(patchersDir, "patchers.json")
         Dim currentPatchers = DeserializePatcherList(patchersFile, patchersDir)
 
@@ -41,8 +41,8 @@ Public Class FilePatcher
         Directory.Delete(tempDirectory, True)
     End Sub
 
-    Public Shared Sub ExportCurrentPatcherPack(patcherZipFilename As String)
-        Dim patchersDir = Path.Combine(Environment.CurrentDirectory, "Tools", "Patchers")
+    Public Shared Sub ExportCurrentPatcherPack(patcherZipFilename As String, modpackDirectory As string)
+        Dim patchersDir = Path.Combine(modpackDirectory, "Tools", "Patchers")
         Zip.Zip(patchersDir, patcherZipFilename)
     End Sub
 

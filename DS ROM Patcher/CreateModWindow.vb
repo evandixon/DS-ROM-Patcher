@@ -2,7 +2,7 @@
 Imports SkyEditor.Core.Utilities
 
 Public Class CreateModWindow
-    Public Sub New(patchers As List(Of FilePatcher))
+    Public Sub New(patchers As List(Of FilePatcher), modpackDirectory As string)
 
         ' This call is required by the designer.
         InitializeComponent()
@@ -12,6 +12,7 @@ Public Class CreateModWindow
         _FolderDialog = New FolderBrowserDialog
         _OpenFileDialog = New OpenFileDialog
         _OpenFileDialog.Filter = $"{My.Resources.Language.SupportedROMs}|*.nds;*.srl;*.3ds;*.cci;*.cxi;*.cia;|{My.Resources.Language.AllFiles}|*.*"
+        _modpackDirectory=modpackDirectory
     End Sub
 
     Private _CurrentPatchers As List(Of FilePatcher)
@@ -19,6 +20,8 @@ Public Class CreateModWindow
     Private _OpenFileDialog As OpenFileDialog
 
     Private _FolderDialog As FolderBrowserDialog
+
+    Private _modpackDirectory As String
 
     Private Property IsBuilding As Boolean
         Get
@@ -65,12 +68,12 @@ Public Class CreateModWindow
     End Sub
 
     Private Async Sub btnCreate_Click(sender As Object, e As EventArgs) Handles btnCreate.Click
-        Await Build()
+        Await Build(_modpackDirectory)
         Close()
         DialogResult = DialogResult.OK
     End Sub
 
-    Private Async Function Build() As Task
+    Private Async Function Build(modpackDirectory As string) As Task
         IsBuilding = True
 
         Dim builder As New ModBuilder
@@ -85,7 +88,7 @@ Public Class CreateModWindow
         builder.SupportsDelete = chbEnableDelete.Checked
         builder.CustomFilePatchers = _CurrentPatchers
 
-        Dim destination As String = Path.Combine(Environment.CurrentDirectory, "Mods", txtModName.Text & " v" & txtModVersion.Text & ".mod")
+        Dim destination As String = Path.Combine(modpackDirectory, "Mods", txtModName.Text & " v" & txtModVersion.Text & ".mod")
 
         AddHandler builder.BuildStatusChanged, AddressOf OnProgressChanged
         Await builder.DoBuild(txtOriginal.Text, txtModified.Text, destination, New WindowsIOProvider)

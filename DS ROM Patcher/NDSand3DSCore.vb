@@ -12,10 +12,9 @@ Public Class NDSand3DSCore
         End If
     End Sub
 
-    Public Overrides Async Function RunPatch(modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
-        Dim currentDirectory = Environment.CurrentDirectory
+    Public Overrides Async Function RunPatch(modpackDirectory As String, modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
         Dim args = Environment.GetCommandLineArgs
-        Dim toolsDir = Path.Combine(currentDirectory, "Tools")
+        Dim toolsDir = Path.Combine(modpackDirectory, "Tools")
         Dim patchersDir = Path.Combine(toolsDir, "Patchers")
         Dim ROMDirectory = Path.Combine(toolsDir, "dstemp")
         Dim modTempDirectory = Path.Combine(toolsDir, "modstemp")
@@ -62,7 +61,7 @@ Public Class NDSand3DSCore
             Next
 
             For Each item In modFiles
-                Await ModFile.ApplyPatch(modFiles, item, currentDirectory, ROMDirectory, patchers)
+                Await ModFile.ApplyPatch(modFiles, item, modpackDirectory, ROMDirectory, patchers)
             Next
 
             'Repack the ROM
