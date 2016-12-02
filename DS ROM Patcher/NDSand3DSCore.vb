@@ -53,7 +53,7 @@ Public Class NDSand3DSCore
             'Apply the Mods
             Const RepackMessage As String = "Applying the mods..."
             RaiseProgressChanged(1 / 3, RepackMessage)
-            Await ModFile.ApplyPatches(mods, patchers, currentDirectory, ROMDirectory)
+            Await ModFile.ApplyPatches(mods, patchers, modpackDirectory, ROMDirectory)
 
             'Repack the ROM
             Dim sourceExt As String = ""
