@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports DS_ROM_Patcher.Utilties
 Imports Newtonsoft.Json
 Imports SkyEditor.Core.Utilities
 

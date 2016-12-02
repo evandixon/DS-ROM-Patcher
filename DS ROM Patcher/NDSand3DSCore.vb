@@ -12,7 +12,7 @@ Public Class NDSand3DSCore
         End If
     End Sub
 
-    Public Overrides Async Function RunPatch(modpackDirectory As String, modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
+    Public Overrides Async Function RunPatch(modpackDirectory As String, patchers As List(Of FilePatcher), modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
         Dim args = Environment.GetCommandLineArgs
         Dim toolsDir = Path.Combine(modpackDirectory, "Tools")
         Dim patchersDir = Path.Combine(toolsDir, "Patchers")
@@ -53,16 +53,7 @@ Public Class NDSand3DSCore
             'Apply the Mods
             Const RepackMessage As String = "Applying the mods..."
             RaiseProgressChanged(1 / 3, RepackMessage)
-
-            Dim patchers = FilePatcher.DeserializePatcherList(Path.Combine(patchersDir, "patchers.json"), patchersDir)
-            Dim modFiles As New List(Of ModFile)
-            For Each item In mods
-                modFiles.Add(New ModFile(item.Filename))
-            Next
-
-            For Each item In modFiles
-                Await ModFile.ApplyPatch(modFiles, item, modpackDirectory, ROMDirectory, patchers)
-            Next
+            Await ModFile.ApplyPatches(mods, patchers, currentDirectory, ROMDirectory)
 
             'Repack the ROM
             Dim sourceExt As String = ""
@@ -126,6 +117,8 @@ ShowSaveDialogNDS:  Dim s As New SaveFileDialog
                     Else
                         If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
                             GoTo ShowSaveDialogNDS
+                        Else
+                            GoTo StopPatching
                         End If
                     End If
                 End If
@@ -133,7 +126,7 @@ ShowSaveDialogNDS:  Dim s As New SaveFileDialog
                 'Todo: watch progress changed event
                 Await c.BuildAuto(ROMDirectory, destinationPath)
             End If
-            RaiseProgressChanged(1, "Ready")
+StopPatching: RaiseProgressChanged(1, "Ready")
 
             'Cleanup
             If IO.Directory.Exists(ROMDirectory) Then IO.Directory.Delete(ROMDirectory, True)

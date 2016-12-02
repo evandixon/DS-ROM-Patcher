@@ -32,5 +32,5 @@
     ''' </summary>
     Public MustOverride Function SupportsMod(modpack As ModpackInfo, modToCheck As ModJson) As Task(Of Boolean)
 
-    Public MustOverride Function RunPatch(modpackDirectory As String, modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
+    Public MustOverride Function RunPatch(modpackDirectory As String, patchers As List(Of FilePatcher), modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
 End Class

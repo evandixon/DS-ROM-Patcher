@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
 Imports System.Reflection
+Imports DS_ROM_Patcher.Utilties
 Imports ICSharpCode.SharpZipLib.Zip
 Imports SkyEditor.Core.Utilities
 
@@ -126,11 +127,11 @@ Public Class Form2
                 End If
             Next
 
-            Dim items As New List(Of ModJson)
-            For Each item In chbMods.CheckedItems
-                items.Add(item)
+            Dim items As New List(Of ModFile)
+            For Each item As ModJson In chbMods.CheckedItems
+                items.Add(New ModFile(item.Filename))
             Next
-            Await core.RunPatch(currentDirectory, Modpack, items, args(2))
+            Await core.RunPatch(currentDirectory, Patchers, Modpack, items, args(2))
 
             Me.Close()
         End If
@@ -217,11 +218,11 @@ Public Class Form2
     Private Async Sub btnPatch_Click(sender As Object, e As EventArgs) Handles btnPatch.Click
         IsLoading = True
 
-        Dim items As New List(Of ModJson)
-        For Each item In chbMods.CheckedItems
-            items.Add(item)
+        Dim items As New List(Of ModFile)
+        For Each item As ModJson In chbMods.CheckedItems
+            items.Add(New ModFile(item.Filename))
         Next
-        Await core.RunPatch(currentDirectory, Modpack, items)
+        Await core.RunPatch(currentDirectory, Patchers, Modpack, items)
 
         IsLoading = False
     End Sub
@@ -245,10 +246,6 @@ Public Class Form2
             lblStatus.Text = e.Message
             pbProgress.Value = e.Progress * 100
         End If
-    End Sub
-
-    Private Sub chbDesignMode_CheckedChanged(sender As Object, e As EventArgs) Handles chbDesignMode.CheckedChanged
-        menuMain.Visible = chbDesignMode.Checked
     End Sub
 
 End Class
