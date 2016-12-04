@@ -1,9 +1,9 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
 Imports System.Reflection
-Imports DS_ROM_Patcher.Utilties
 Imports ICSharpCode.SharpZipLib.Zip
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.Core.Windows.Providers
 
 Public Class Form2
 
@@ -186,6 +186,15 @@ Public Class Form2
         If metaEdit.ShowDialog = DialogResult.OK Then
             Modpack = metaEdit.ModpackInfo
             Json.SerializeToFile(modpackInfoFilename, Modpack, New WindowsIOProvider)
+        End If
+    End Sub
+
+    Private Sub ExportToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExportToolStripMenuItem.Click
+        Dim s As New SaveFileDialog
+        s.Filter = $"{My.Resources.Language.ModpackZip}|*.zip|{My.Resources.Language.AllFiles}|*.*"
+        If s.ShowDialog = DialogResult.OK Then
+            Dim b As New ModBuilder
+            b.ZipModpack(currentDirectory, s.FileName)
         End If
     End Sub
 #End Region

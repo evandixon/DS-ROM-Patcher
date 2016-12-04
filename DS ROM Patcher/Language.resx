@@ -135,6 +135,9 @@
   <data name="LoadingGeneratingPatch" xml:space="preserve">
     <value>Generating patch...</value>
   </data>
+  <data name="ModpackZip" xml:space="preserve">
+    <value>Modpack Zip Files</value>
+  </data>
   <data name="PatcherPack" xml:space="preserve">
     <value>Patcher Pack</value>
   </data>

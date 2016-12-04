@@ -4,6 +4,7 @@ Imports System.Text.RegularExpressions
 Imports DS_ROM_Patcher.Utilities
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.Core.Windows.Utilities
 
 Public Class ModBuilder
     Implements IReportProgress
@@ -85,7 +86,7 @@ Public Class ModBuilder
     Dim _isBuildComplete As Boolean
 #End Region
 
-    Public Property ModID As String
+    Public Property ModId As String
 
     Public Property ModName As String
 
@@ -128,12 +129,8 @@ Public Class ModBuilder
         Return out
     End Function
 
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <returns></returns>
     ''' <remarks>If this is overridden, do custom work, THEN use MyBase.Build</remarks>
-    Public Async Function DoBuild(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IOProvider) As Task
+    Public Async Function BuildMod(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IOProvider) As Task
         IsBuildComplete = False
 
         Dim modTempFiles = Path.Combine(ModTempDir, "Files")
@@ -261,7 +258,7 @@ Public Class ModBuilder
         '-Copy and write files
         Await FileSystem.ReCreateDirectory(ModTempDir, provider)
 
-        File.WriteAllText(IO.Path.Combine(ModTempDir, "mod.json"), Json.Serialize(actions))
+        File.WriteAllText(IO.Path.Combine(ModTempDir, "mod.json"), SkyEditor.Core.Utilities.Json.Serialize(actions))
 
         Me.BuildProgress = 0
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
@@ -359,4 +356,28 @@ Public Class ModBuilder
         BuildStatusMessage = My.Resources.Language.Complete
         IsBuildComplete = True
     End Function
+
+    ''' <summary>
+    ''' Copies the patcher program (aka the code library/program that contains this function) to the given directory.
+    ''' </summary>
+    Public Sub CopyPatcherProgram(modpackDirectory As String)
+        Dim currentAssembly = GetType(ModBuilder).Assembly
+        Dim referenced = WindowsReflectionHelpers.GetAssemblyDependencies(currentAssembly)
+        For Each item In referenced.Concat({currentAssembly.Location})
+            File.Copy(item, Path.Combine(modpackDirectory, Path.GetFileName(item)))
+        Next
+    End Sub
+
+    Public Sub CopyMod(modFilename As String, modpackDirectory As String, Optional overwrite As Boolean = True)
+        Dim modsDir = Path.Combine(modpackDirectory, "Mods")
+        If Not Directory.Exists(modsDir) Then
+            Directory.CreateDirectory(modsDir)
+        End If
+
+        File.Copy(modFilename, Path.Combine(modsDir, Path.GetFileName(modFilename)), overwrite)
+    End Sub
+
+    Public Sub ZipModpack(modpackDirectory As String, zipFilename As String)
+        Zip.Zip(modpackDirectory, zipFilename)
+    End Sub
 End Class

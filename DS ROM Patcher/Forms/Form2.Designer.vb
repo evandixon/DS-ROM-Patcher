@@ -40,18 +40,19 @@ Partial Class Form2
         Me.ModsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.CreateModToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.EditMetadataToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.GroupBox1.SuspendLayout()
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SplitContainer1.Panel1.SuspendLayout()
-        Me.SplitContainer1.Panel2.SuspendLayout()
-        Me.SplitContainer1.SuspendLayout()
-        Me.StatusStrip1.SuspendLayout()
-        Me.menuMain.SuspendLayout()
-        Me.SuspendLayout()
+        Me.ExportToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.GroupBox1.SuspendLayout
+        CType(Me.SplitContainer1,System.ComponentModel.ISupportInitialize).BeginInit
+        Me.SplitContainer1.Panel1.SuspendLayout
+        Me.SplitContainer1.Panel2.SuspendLayout
+        Me.SplitContainer1.SuspendLayout
+        Me.StatusStrip1.SuspendLayout
+        Me.menuMain.SuspendLayout
+        Me.SuspendLayout
         '
         'Label1
         '
-        Me.Label1.AutoSize = True
+        Me.Label1.AutoSize = true
         Me.Label1.Location = New System.Drawing.Point(7, 32)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(37, 13)
@@ -60,8 +61,8 @@ Partial Class Form2
         '
         'txtInput
         '
-        Me.txtInput.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtInput.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtInput.Location = New System.Drawing.Point(50, 29)
         Me.txtInput.Name = "txtInput"
         Me.txtInput.Size = New System.Drawing.Size(311, 20)
@@ -69,25 +70,25 @@ Partial Class Form2
         '
         'btnBrowse
         '
-        Me.btnBrowse.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnBrowse.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.btnBrowse.Location = New System.Drawing.Point(367, 27)
         Me.btnBrowse.Name = "btnBrowse"
         Me.btnBrowse.Size = New System.Drawing.Size(75, 23)
         Me.btnBrowse.TabIndex = 2
         Me.btnBrowse.Text = "Browse..."
-        Me.btnBrowse.UseVisualStyleBackColor = True
+        Me.btnBrowse.UseVisualStyleBackColor = true
         '
         'GroupBox1
         '
-        Me.GroupBox1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom)  _
+            Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.GroupBox1.Controls.Add(Me.SplitContainer1)
         Me.GroupBox1.Location = New System.Drawing.Point(12, 56)
         Me.GroupBox1.Name = "GroupBox1"
         Me.GroupBox1.Size = New System.Drawing.Size(433, 260)
         Me.GroupBox1.TabIndex = 3
-        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.TabStop = false
         Me.GroupBox1.Text = "Mods"
         '
         'SplitContainer1
@@ -110,7 +111,7 @@ Partial Class Form2
         'chbMods
         '
         Me.chbMods.Dock = System.Windows.Forms.DockStyle.Fill
-        Me.chbMods.FormattingEnabled = True
+        Me.chbMods.FormattingEnabled = true
         Me.chbMods.Location = New System.Drawing.Point(0, 0)
         Me.chbMods.Name = "chbMods"
         Me.chbMods.Size = New System.Drawing.Size(185, 241)
@@ -120,21 +121,21 @@ Partial Class Form2
         '
         Me.txtDescription.Dock = System.Windows.Forms.DockStyle.Fill
         Me.txtDescription.Location = New System.Drawing.Point(0, 0)
-        Me.txtDescription.Multiline = True
+        Me.txtDescription.Multiline = true
         Me.txtDescription.Name = "txtDescription"
-        Me.txtDescription.ReadOnly = True
+        Me.txtDescription.ReadOnly = true
         Me.txtDescription.Size = New System.Drawing.Size(238, 241)
         Me.txtDescription.TabIndex = 2
         '
         'btnPatch
         '
-        Me.btnPatch.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnPatch.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
         Me.btnPatch.Location = New System.Drawing.Point(8, 322)
         Me.btnPatch.Name = "btnPatch"
         Me.btnPatch.Size = New System.Drawing.Size(75, 23)
         Me.btnPatch.TabIndex = 7
         Me.btnPatch.Text = "Patch"
-        Me.btnPatch.UseVisualStyleBackColor = True
+        Me.btnPatch.UseVisualStyleBackColor = true
         '
         'StatusStrip1
         '
@@ -186,7 +187,7 @@ Partial Class Form2
         '
         'ModsToolStripMenuItem
         '
-        Me.ModsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateModToolStripMenuItem, Me.EditMetadataToolStripMenuItem})
+        Me.ModsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.CreateModToolStripMenuItem, Me.EditMetadataToolStripMenuItem, Me.ExportToolStripMenuItem})
         Me.ModsToolStripMenuItem.Name = "ModsToolStripMenuItem"
         Me.ModsToolStripMenuItem.Size = New System.Drawing.Size(69, 20)
         Me.ModsToolStripMenuItem.Text = "&Modpack"
@@ -194,18 +195,24 @@ Partial Class Form2
         'CreateModToolStripMenuItem
         '
         Me.CreateModToolStripMenuItem.Name = "CreateModToolStripMenuItem"
-        Me.CreateModToolStripMenuItem.Size = New System.Drawing.Size(147, 22)
+        Me.CreateModToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
         Me.CreateModToolStripMenuItem.Text = "&Create Mod"
         '
         'EditMetadataToolStripMenuItem
         '
         Me.EditMetadataToolStripMenuItem.Name = "EditMetadataToolStripMenuItem"
-        Me.EditMetadataToolStripMenuItem.Size = New System.Drawing.Size(147, 22)
-        Me.EditMetadataToolStripMenuItem.Text = "&Edit Metadata"
+        Me.EditMetadataToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.EditMetadataToolStripMenuItem.Text = "Edit &Metadata"
+        '
+        'ExportToolStripMenuItem
+        '
+        Me.ExportToolStripMenuItem.Name = "ExportToolStripMenuItem"
+        Me.ExportToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.ExportToolStripMenuItem.Text = "&Export"
         '
         'Form2
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6!, 13!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(457, 370)
         Me.Controls.Add(Me.StatusStrip1)
@@ -218,20 +225,20 @@ Partial Class Form2
         Me.MainMenuStrip = Me.menuMain
         Me.Name = "Form2"
         Me.Text = "{0} Patcher v{1}"
-        Me.GroupBox1.ResumeLayout(False)
-        Me.SplitContainer1.Panel1.ResumeLayout(False)
-        Me.SplitContainer1.Panel2.ResumeLayout(False)
-        Me.SplitContainer1.Panel2.PerformLayout()
-        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.SplitContainer1.ResumeLayout(False)
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
-        Me.menuMain.ResumeLayout(False)
-        Me.menuMain.PerformLayout()
-        Me.ResumeLayout(False)
-        Me.PerformLayout()
+        Me.GroupBox1.ResumeLayout(false)
+        Me.SplitContainer1.Panel1.ResumeLayout(false)
+        Me.SplitContainer1.Panel2.ResumeLayout(false)
+        Me.SplitContainer1.Panel2.PerformLayout
+        CType(Me.SplitContainer1,System.ComponentModel.ISupportInitialize).EndInit
+        Me.SplitContainer1.ResumeLayout(false)
+        Me.StatusStrip1.ResumeLayout(false)
+        Me.StatusStrip1.PerformLayout
+        Me.menuMain.ResumeLayout(false)
+        Me.menuMain.PerformLayout
+        Me.ResumeLayout(false)
+        Me.PerformLayout
 
-    End Sub
+End Sub
 
     Friend WithEvents Label1 As Label
     Friend WithEvents txtInput As TextBox
@@ -251,4 +258,5 @@ Partial Class Form2
     Friend WithEvents ModsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents CreateModToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents EditMetadataToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ExportToolStripMenuItem As ToolStripMenuItem
 End Class

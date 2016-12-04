@@ -1,8 +1,8 @@
 ﻿Imports System.IO
 Imports DS_ROM_Patcher.Analysis
 Imports DS_ROM_Patcher.Utilities
-Imports DS_ROM_Patcher.Utilties
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.Core.Windows.Providers
 
 Public Class ModFile
     Public Sub New(Filename As String)

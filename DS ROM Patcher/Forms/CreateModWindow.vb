@@ -1,9 +1,9 @@
 ﻿Imports System.IO
-Imports DS_ROM_Patcher.Utilties
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.Core.Windows.Providers
 
 Public Class CreateModWindow
-    Public Sub New(patchers As List(Of FilePatcher), modpackDirectory As string)
+    Public Sub New(patchers As List(Of FilePatcher), modpackDirectory As String)
 
         ' This call is required by the designer.
         InitializeComponent()
@@ -13,7 +13,7 @@ Public Class CreateModWindow
         _FolderDialog = New FolderBrowserDialog
         _OpenFileDialog = New OpenFileDialog
         _OpenFileDialog.Filter = $"{My.Resources.Language.SupportedROMs}|*.nds;*.srl;*.3ds;*.cci;*.cxi;*.cia;|{My.Resources.Language.AllFiles}|*.*"
-        _modpackDirectory=modpackDirectory
+        _modpackDirectory = modpackDirectory
     End Sub
 
     Private _CurrentPatchers As List(Of FilePatcher)
@@ -74,11 +74,11 @@ Public Class CreateModWindow
         DialogResult = DialogResult.OK
     End Sub
 
-    Private Async Function Build(modpackDirectory As string) As Task
+    Private Async Function Build(modpackDirectory As String) As Task
         IsBuilding = True
 
         Dim builder As New ModBuilder
-        builder.ModID = txtModID.Text
+        builder.ModId = txtModID.Text
         builder.ModName = txtModName.Text
         builder.ModAuthor = txtModAuthor.Text
         builder.ModDescription = txtModDescription.Text
@@ -92,7 +92,7 @@ Public Class CreateModWindow
         Dim destination As String = Path.Combine(modpackDirectory, "Mods", txtModName.Text & " v" & txtModVersion.Text & ".mod")
 
         AddHandler builder.BuildStatusChanged, AddressOf OnProgressChanged
-        Await builder.DoBuild(txtOriginal.Text, txtModified.Text, destination, New WindowsIOProvider)
+        Await builder.BuildMod(txtOriginal.Text, txtModified.Text, destination, New WindowsIOProvider)
         RemoveHandler builder.BuildStatusChanged, AddressOf OnProgressChanged
 
         CreatedModFilename = destination
