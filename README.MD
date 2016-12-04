@@ -1,6 +1,14 @@
 # DS ROM Patcher
 Normaly, distributing ROM hacks for NDS ROMs involves an XDelta patch applied to the entire ROM.  3DS hacks usually involves tedious ROM extraction and file replacement.  Patches applied to the ROM as a whole do not support multiple regions of games, and tedious ROM extraction and file replacement is a chore.  DS ROM Patcher aims to fix that.
 
+## System requirements
+* .Net Framework 4.6
+
+## Planned Features:
+* Easier-to-use UI for creating modpacks.
+* Patch collision detection to warn the user of conflicting mods before attempting to apply them.
+* Patcher pack creation UI.
+
 ## Concepts and terminology
 ### Patch
 A patch is the data needed to alter a file without distributing the altered version in its entirety.  Certain kinds of patches might be merge-safe, meaning that multiple patches from multiple mods can be applied to the same file.
@@ -57,20 +65,4 @@ Modpack creation is still under construction, but can be done, albeit more manua
 		* Enable Adds will add any file that's in the modified ROM but not the source ROM to the mod in its entirety.  Leave this checked if you want to add files to the ROM.
 		* Enable Deletes will delete any file from a ROM if it's in the source ROM but not the modified ROM.  Leave this unchecked unless you really want to delete files from the ROM.
   	 5. Click Create, and wait for the dialog to go away.
- 5. Create the modpack.  There is currently no GUI to do this, so you'll have to do things yourself.
-	 1. Close the form.
-	 2. Browse to the directory the program is in.
-	 3. Open "Tools".
-	 4. Delete the following folders if the exist: 
-		* dstemp
-		* modstemp
-	 5. Go back to the directory the program is in.
-	 6. Create a new zip file containing all the files and directories within.  To keep things standard, *only* use a zip file, because external programs may apply this modpack.  It is against the license of this program to use other archive formats without explicit written permission.
-	
-## System requirements
-* .Net Framework 4.6
-
-## Planned Features:
-* Easier-to-use UI for creating modpacks.
-* Patch collision detection to warn the user of conflicting mods before attempting to apply them.
-* Patcher pack creation UI.
+ 5. Use Modpack -> Export to create a redistributable zip file that can be used to apply your ROM hack.
