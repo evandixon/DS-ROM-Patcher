@@ -149,6 +149,12 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Analysis\FilePatchAnalysisResult.vb" />
+    <Compile Include="Forms\ThreeDSFormatSelector.Designer.vb">
+      <DependentUpon>ThreeDSFormatSelector.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ThreeDSFormatSelector.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.vb" />
     <Compile Include="Language.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -176,6 +182,7 @@
     </Compile>
     <Compile Include="NDSand3DSCore.vb" />
     <Compile Include="PatcherCore.vb" />
+    <Compile Include="DSFormat.vb" />
     <Compile Include="Utilities\ProcessHelper.vb" />
     <Compile Include="Utilities\xdelta.vb" />
   </ItemGroup>
@@ -188,6 +195,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Form2.resx">
       <DependentUpon>Form2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ThreeDSFormatSelector.resx">
+      <DependentUpon>ThreeDSFormatSelector.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Language.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>

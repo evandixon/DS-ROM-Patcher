@@ -83,6 +83,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to Unable to detect the source ROM type.  Please use one of the following command-line arguments when using a directory as the source: -source-nds, -source-3ds, -source-cia, or -source-cxi.
+        '''</summary>
+        Friend Shared ReadOnly Property ErrorUnknownInputType() As String
+            Get
+                Return ResourceManager.GetString("ErrorUnknownInputType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to Analyzing files....
         '''</summary>
         Friend Shared ReadOnly Property LoadingAnalzingFiles() As String
