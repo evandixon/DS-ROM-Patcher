@@ -13,12 +13,12 @@ Public Class NDSand3DSCore
         End If
     End Sub
 
-    Public Overrides Async Function RunPatch(modpackDirectory As String, patchers As List(Of FilePatcher), modpack As ModpackInfo, mods As IEnumerable(Of ModJson), Optional destinationPath As String = Nothing) As Task
-        Dim args = Environment.GetCommandLineArgs
+    Public Overrides Async Function RunPatch(modpackDirectory As String, tempDirectory As String, patchers As List(Of FilePatcher), modpack As ModpackInfo, mods As IEnumerable(Of ModFile), Optional destinationPath As String = Nothing) As Task
+        Dim args = Environment.GetCommandLineArgs        
         Dim toolsDir = Path.Combine(modpackDirectory, "Tools")
         Dim patchersDir = Path.Combine(toolsDir, "Patchers")
-        Dim ROMDirectory = Path.Combine(toolsDir, "dstemp")
-        Dim modTempDirectory = Path.Combine(toolsDir, "modstemp")
+        Dim ROMDirectory = Path.Combine(tempDirectory, "dstemp")
+        Dim modTempDirectory = Path.Combine(tempDirectory, "modstemp")
         Dim isDirectoryMode As Boolean = False
         Dim outputFormat As DSFormat
 
@@ -53,7 +53,7 @@ Public Class NDSand3DSCore
             'Apply the Mods
             Const RepackMessage As String = "Applying the mods..."
             RaiseProgressChanged(1 / 3, RepackMessage)
-            Await ModFile.ApplyPatches(mods, patchers, modpackDirectory, ROMDirectory)
+            Await ModFile.ApplyPatches(mods, patchers, modpackDirectory, tempDirectory, ROMDirectory)
 
             'Repack the ROM
             If isDirectoryMode Then
@@ -84,7 +84,7 @@ Public Class NDSand3DSCore
             End If
 
             RaiseProgressChanged(2 / 3, "Repacking the ROM...", True)
-            If Not outputFormat = DSFormat.HANS AndAlso String.IsNullOrEmpty(destinationPath) AndAlso outputFormat = DSFormat.NDS Then
+            If Not outputFormat = DSFormat.HANS AndAlso String.IsNullOrEmpty(destinationPath) AndAlso Not outputFormat = DSFormat.NDS Then
 ShowFormatDialog: Dim formatDialog As New ThreeDSFormatSelector
                 If Not formatDialog.ShowDialog = DialogResult.OK Then
                     If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.Yes Then

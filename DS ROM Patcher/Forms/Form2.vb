@@ -132,7 +132,7 @@ Public Class Form2
             For Each item As ModJson In chbMods.CheckedItems
                 items.Add(New ModFile(item.Filename))
             Next
-            Await core.RunPatch(currentDirectory, Patchers, Modpack, items, args(2))
+            Await core.RunPatch(currentDirectory, tempDirectory, Patchers, Modpack, items, args(2))
 
             Me.Close()
         End If
@@ -232,17 +232,14 @@ Public Class Form2
         For Each item As ModJson In chbMods.CheckedItems
             items.Add(New ModFile(item.Filename))
         Next
-        Await core.RunPatch(currentDirectory, Patchers, Modpack, items)
+        Await core.RunPatch(currentDirectory, tempDirectory, Patchers, Modpack, items)
 
         IsLoading = False
     End Sub
 
     Private Sub Form2_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
-        Dim modTempDirectory = IO.Path.Combine(currentDirectory, "Tools", "modstemp")
-        If Directory.Exists(modTempDirectory) Then
-            For Each item In Directory.GetDirectories(modTempDirectory, "*", IO.SearchOption.TopDirectoryOnly)
-                Directory.Delete(item, True)
-            Next
+        If Directory.Exists(tempDirectory) Then
+            Directory.Delete(tempDirectory, True)
         End If
     End Sub
 

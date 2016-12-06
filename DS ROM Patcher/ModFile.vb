@@ -104,7 +104,7 @@ Public Class ModFile
         Return modResult
     End Function
 
-    Public Async Function ApplyPatch(currentDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
+    Public Async Function ApplyPatch(currentDirectory As String, tempDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
         Dim analysis = AnalyzeMod(currentDirectory, ROMDirectory, patchers)
         Using xdelta As New xdelta
             Dim renameTemp = IO.Path.Combine(currentDirectory, "Tools", "renametemp")
@@ -120,7 +120,7 @@ Public Class ModFile
                     For Each patch In fileAnalysis.Patches
                         Dim patchFile = Path.Combine(FilesPath, patch.Key)
                         Dim patcher = patch.Value
-                        Dim tempFilename As String = Path.Combine(currentDirectory, "Tools", "tempFile")
+                        Dim tempFilename As String = Path.Combine(tempDirectory,  "tempFile")
 
                         'Run the patcher
                         If patcher Is Nothing Then
@@ -172,7 +172,7 @@ Public Class ModFile
             Patched = True
         End Using
     End Function
-    Public Shared Async Function ApplyPatch(Mods As List(Of ModFile), ModFile As ModFile, currentDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
+    Public Shared Async Function ApplyPatch(Mods As List(Of ModFile), ModFile As ModFile, currentDirectory As String, tempDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
         If Not ModFile.Patched Then
             'Patch depencencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
@@ -180,18 +180,18 @@ Public Class ModFile
                     Dim q = From m In Mods Where m.ID = item AndAlso Not String.IsNullOrEmpty(m.ID)
 
                     For Each d In q
-                        Await ApplyPatch(Mods, d, currentDirectory, ROMDirectory, patchers)
+                        Await ApplyPatch(Mods, d, currentDirectory, tempDirectory, ROMDirectory, patchers)
                     Next
                 Next
             End If
-            Await ModFile.ApplyPatch(currentDirectory, ROMDirectory, patchers)
+            Await ModFile.ApplyPatch(currentDirectory, tempDirectory, ROMDirectory, patchers)
             'Patch dependencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
                 For Each item In ModFile.ModDetails.DependenciesAfter
                     Dim q = From m In Mods Where m.ID = item AndAlso Not String.IsNullOrEmpty(m.ID)
 
                     For Each d In q
-                        Await ApplyPatch(Mods, d, currentDirectory, ROMDirectory, patchers)
+                        Await ApplyPatch(Mods, d, currentDirectory, tempDirectory, ROMDirectory, patchers)
                     Next
                 Next
             End If
@@ -205,9 +205,9 @@ Public Class ModFile
     ''' <param name="patchers">The modpack-level patchers used to apply patches.</param>
     ''' <param name="modpackDirectory">The directory of the modpack.  This is <see cref="Environment.CurrentDirectory"/> if called from the DS-ROM-Patcher.</param>
     ''' <param name="romDirectory">The unpacked ROM.</param>
-    Public Shared Async Function ApplyPatches(mods As List(Of ModFile), patchers As List(Of FilePatcher), modpackDirectory As String, romDirectory As String) As Task
+    Public Shared Async Function ApplyPatches(mods As List(Of ModFile), patchers As List(Of FilePatcher), modpackDirectory As String, tempDirectory As String, romDirectory As String) As Task
         For Each item In mods
-            Await ModFile.ApplyPatch(mods, item, modpackDirectory, romDirectory, patchers)
+            Await ModFile.ApplyPatch(mods, item, modpackDirectory, tempDirectory, romDirectory, patchers)
         Next
     End Function
 
