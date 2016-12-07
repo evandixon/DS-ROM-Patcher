@@ -5,7 +5,7 @@ Normaly, distributing ROM hacks for NDS ROMs involves an XDelta patch applied to
 * .Net Framework 4.6
 
 ## Planned Features:
-* Easier-to-use UI for creating modpacks.
+* Mod metadata editing
 * Patch collision detection to warn the user of conflicting mods before attempting to apply them.
 * Patcher pack creation UI.
 
@@ -50,7 +50,7 @@ Modpack creation is still under construction, but can be done, albeit more manua
 	* Author is whomever is responsible for the modpack.  If you're collecting several mods made by others for a unique game experience, this is you.  If you're making a modpack just to simplify installing someone else's hack, please enter the name of the mod author.
 	* Version is a string differentiating _this_ build of the modpack from any others you may have made.  There's no rules for this, just try to ensure it makes logical sense.
 	* System is exactly what it says on the tin: the system on which the game you're modding runs.  Supported values are `3DS` and `NDS`.
-	* Game code is a regular expression that matches the game code of any supported game.  For 3DS games, this is the 16 digit title ID.  For NDS games, this is the 4 letter game code.
+	* Game code is a regular expression that matches the game code of any supported game.  For 3DS games, this is the 16 digit title ID.  For NDS games, this is the 4 letter game code.  If the modpack can be safely applied to games from different regions, construct the regular expression to match all supported regions.
  4. Use Modpack -> Create Mod.  Follow the below steps and repeat for every mod you wish to create.
  	 1. Browse to the original ROM.
   	 2. Browse to the modified ROM.
@@ -61,6 +61,7 @@ Modpack creation is still under construction, but can be done, albeit more manua
 		* Description is exactly what it says on the tin: Describe how the ROM will be different after applying this mod.
 		* Version is a string differentiating _this_ build of the mod that may have been made.  There's no rules for this, just try to ensure it makes logical sense.
 		* Dependencies are a semi-colon separated list of the IDs of mods that need to be applied before or after this one.  Unless you're making a mod of another mod (and the mod was applied to the source ROM to which you've browsed), leave these blank.
+		* Game code is a regular expression that matches the game code of any supported game.  For 3DS games, this is the 16 digit title ID.  For NDS games, this is the 4 letter game code.  If the modpack can be safely applied to games from different regions, construct the regular expression to match all supported regions.
   	 4. Choose additional mod creation options.
 		* Enable Adds will add any file that's in the modified ROM but not the source ROM to the mod in its entirety.  Leave this checked if you want to add files to the ROM.
 		* Enable Deletes will delete any file from a ROM if it's in the source ROM but not the modified ROM.  Leave this unchecked unless you really want to delete files from the ROM.
