@@ -41,7 +41,6 @@ Public Class Form2
     Dim modTempDirectory = Path.Combine(tempDirectory, "modstemp")
     Dim unpackTempDirectory = Path.Combine(tempDirectory, "dstemp")
     Dim modsDirectory = Path.Combine(currentDirectory, "Mods")
-    Dim modpackInfoFilename As String = Path.Combine(modsDirectory, "Modpack.json")
 
     Private Async Sub Form2_Load(sender As Object, e As EventArgs) Handles Me.Load
         Dim completed As Integer = 0
@@ -60,11 +59,7 @@ Public Class Form2
         End If
 
         'Load modpack info
-        If File.Exists(modpackInfoFilename) Then
-            Modpack = Json.Deserialize(Of ModpackInfo)(File.ReadAllText(modpackInfoFilename))
-        Else
-            Modpack = New ModpackInfo
-        End If
+        Modpack = ModBuilder.GetModpackInfo(currentDirectory)
 
         'Unpack Mods
         If Directory.Exists(modsDirectory) Then
@@ -187,7 +182,7 @@ Public Class Form2
         Dim metaEdit As New ModpackMetadataWindow(Modpack)
         If metaEdit.ShowDialog = DialogResult.OK Then
             Modpack = metaEdit.ModpackInfo
-            Json.SerializeToFile(modpackInfoFilename, Modpack, New WindowsIOProvider)
+            ModBuilder.SaveModpackInfo(currentDirectory, metaEdit.ModpackInfo)
         End If
     End Sub
 
@@ -195,8 +190,7 @@ Public Class Form2
         Dim s As New SaveFileDialog
         s.Filter = $"{My.Resources.Language.ModpackZip}|*.zip|{My.Resources.Language.AllFiles}|*.*"
         If s.ShowDialog = DialogResult.OK Then
-            Dim b As New ModBuilder
-            b.ZipModpack(currentDirectory, s.FileName)
+            ModBuilder.ZipModpack(currentDirectory, s.FileName)
         End If
     End Sub
 #End Region

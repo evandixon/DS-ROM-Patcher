@@ -108,7 +108,7 @@ Public Class ModBuilder
 
     Public Property CustomFilePatchers As List(Of FilePatcher)
 
-    Public property GameCode As string
+    Public Property GameCode As String
 
     Private ReadOnly Property ModTempDir As String
         Get
@@ -142,7 +142,7 @@ Public Class ModBuilder
         Dim actions As New ModJson
         actions.DependenciesBefore = ModDependenciesBefore
         actions.DependenciesAfter = ModDependenciesAfter
-        actions.ID = ModID
+        actions.ID = ModId
         actions.Name = ModName
         actions.Version = ModVersion
         actions.Author = ModAuthor
@@ -363,7 +363,7 @@ Public Class ModBuilder
     ''' <summary>
     ''' Copies the patcher program (aka the code library/program that contains this function) to the given directory.
     ''' </summary>
-    Public Sub CopyPatcherProgram(modpackDirectory As String)
+    Public Shared Sub CopyPatcherProgram(modpackDirectory As String)
         Dim currentAssembly = GetType(ModBuilder).Assembly
         Dim referenced = WindowsReflectionHelpers.GetAssemblyDependencies(currentAssembly)
         For Each item In referenced.Concat({currentAssembly.Location})
@@ -371,7 +371,7 @@ Public Class ModBuilder
         Next
     End Sub
 
-    Public Sub CopyMod(modFilename As String, modpackDirectory As String, Optional overwrite As Boolean = True)
+    Public Shared Sub CopyMod(modFilename As String, modpackDirectory As String, Optional overwrite As Boolean = True)
         Dim modsDir = Path.Combine(modpackDirectory, "Mods")
         If Not Directory.Exists(modsDir) Then
             Directory.CreateDirectory(modsDir)
@@ -380,7 +380,21 @@ Public Class ModBuilder
         File.Copy(modFilename, Path.Combine(modsDir, Path.GetFileName(modFilename)), overwrite)
     End Sub
 
-    Public Sub ZipModpack(modpackDirectory As String, zipFilename As String)
+    Public Shared Sub ZipModpack(modpackDirectory As String, zipFilename As String)
         Zip.Zip(modpackDirectory, zipFilename)
+    End Sub
+
+    Public Shared Function GetModpackInfo(modpackDirectory As String) As ModpackInfo
+        Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
+        If File.Exists(modpackInfoFilename) Then
+            Return SkyEditor.Core.Windows.Utilities.Json.DeserializeFromFile(Of ModpackInfo)(modpackInfoFilename)
+        Else
+            Return New ModpackInfo
+        End If
+    End Function
+
+    Public Shared Sub SaveModpackInfo(modpackDirectory As String, info As ModpackInfo)
+        Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
+        SkyEditor.Core.Windows.Utilities.Json.SerializeToFile(modpackInfoFilename, info)
     End Sub
 End Class
