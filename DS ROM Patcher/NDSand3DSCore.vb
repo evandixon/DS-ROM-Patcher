@@ -109,7 +109,7 @@ ShowFormatDialog: Dim formatDialog As New ThreeDSFormatSelector
             Select Case outputFormat
                 Case DSFormat.HANS
                     Await c.BuildHans(ROMDirectory, destinationPath, modpack.ShortName)
-                Case DSFormat.Auto
+                Case DSFormat.Auto, DSFormat.Auto3DS
                     Await c.BuildAuto(ROMDirectory, destinationPath)
                 Case DSFormat.DecCCI
                     Await c.Build3DSDecrypted(ROMDirectory, destinationPath)
@@ -132,7 +132,7 @@ StopPatching: RaiseProgressChanged(1, "Ready")
 
     Public Overrides Async Function SupportsMod(modpack As ModpackInfo, modToCheck As ModJson) As Task(Of Boolean)
         Dim currentCode = Await DotNet3dsToolkit.MetadataReader.GetGameID(SelectedFilename)
-        Dim supportedCode = New Regex(modpack.GameCode)
+        Dim supportedCode = New Regex(modToCheck.GameCode)
         Return supportedCode.IsMatch(currentCode)
     End Function
 End Class

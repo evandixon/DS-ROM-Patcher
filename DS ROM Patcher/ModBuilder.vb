@@ -108,6 +108,8 @@ Public Class ModBuilder
 
     Public Property CustomFilePatchers As List(Of FilePatcher)
 
+    Public property GameCode As string
+
     Private ReadOnly Property ModTempDir As String
         Get
             If _modTempDir Is Nothing Then
@@ -146,6 +148,7 @@ Public Class ModBuilder
         actions.Author = ModAuthor
         actions.Description = ModDescription
         actions.UpdateUrl = Homepage
+        actions.GameCode = GameCode
 
         Await Task.Run(Async Function() As Task
                            Me.BuildProgress = 0

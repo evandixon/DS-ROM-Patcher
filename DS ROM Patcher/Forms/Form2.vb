@@ -30,6 +30,7 @@ Public Class Form2
 
             btnBrowse.Enabled = Not value
             btnPatch.Enabled = Not value
+            menuMain.Enabled = Not value
         End Set
     End Property
     Dim _isLoading As Boolean

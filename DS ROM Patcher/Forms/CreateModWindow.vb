@@ -37,15 +37,17 @@ Public Class CreateModWindow
     Public Property CreatedModFilename As String
 
 #Region "Browse Buttons"
-    Private Sub btnOriginalBrowseFiles_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFiles.Click
+    Private Async Sub btnOriginalBrowseFiles_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFiles.Click
         If _OpenFileDialog.ShowDialog = DialogResult.OK Then
             txtOriginal.Text = _OpenFileDialog.FileName
+            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetGameID(_OpenFileDialog.FileName)
         End If
     End Sub
 
-    Private Sub btnOriginalBrowseFolders_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFolders.Click
+    Private Async Sub btnOriginalBrowseFolders_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFolders.Click
         If _FolderDialog.ShowDialog = DialogResult.OK Then
             txtOriginal.Text = _FolderDialog.SelectedPath
+            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetGameID(_FolderDialog.SelectedPath)
         End If
     End Sub
 
@@ -88,6 +90,7 @@ Public Class CreateModWindow
         builder.SupportsAdd = chbEnableAdd.Checked
         builder.SupportsDelete = chbEnableDelete.Checked
         builder.CustomFilePatchers = _CurrentPatchers
+        builder.GameCode = txtGameCode.Text
 
         Dim destination As String = Path.Combine(modpackDirectory, "Mods", txtModName.Text & " v" & txtModVersion.Text & ".mod")
 

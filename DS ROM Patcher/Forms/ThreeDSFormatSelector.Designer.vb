@@ -42,7 +42,7 @@ Partial Class ThreeDSFormatSelector
         Me.btnBuild.Location = New System.Drawing.Point(12, 173)
         Me.btnBuild.Name = "btnBuild"
         Me.btnBuild.Size = New System.Drawing.Size(75, 23)
-        Me.btnBuild.TabIndex = 20
+        Me.btnBuild.TabIndex = 3
         Me.btnBuild.Text = "OK"
         Me.btnBuild.UseVisualStyleBackColor = true
         '
@@ -60,7 +60,7 @@ Partial Class ThreeDSFormatSelector
         Me.GroupBox2.Location = New System.Drawing.Point(15, 32)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(444, 135)
-        Me.GroupBox2.TabIndex = 19
+        Me.GroupBox2.TabIndex = 2
         Me.GroupBox2.TabStop = false
         Me.GroupBox2.Text = "Options"
         '
@@ -70,7 +70,7 @@ Partial Class ThreeDSFormatSelector
         Me.rbBuildHANS.Location = New System.Drawing.Point(119, 109)
         Me.rbBuildHANS.Name = "rbBuildHANS"
         Me.rbBuildHANS.Size = New System.Drawing.Size(55, 17)
-        Me.rbBuildHANS.TabIndex = 6
+        Me.rbBuildHANS.TabIndex = 4
         Me.rbBuildHANS.TabStop = true
         Me.rbBuildHANS.Text = "HANS"
         Me.rbBuildHANS.UseVisualStyleBackColor = true
@@ -81,7 +81,7 @@ Partial Class ThreeDSFormatSelector
         Me.rbBuildCCI0Key.Location = New System.Drawing.Point(119, 63)
         Me.rbBuildCCI0Key.Name = "rbBuildCCI0Key"
         Me.rbBuildCCI0Key.Size = New System.Drawing.Size(189, 17)
-        Me.rbBuildCCI0Key.TabIndex = 4
+        Me.rbBuildCCI0Key.TabIndex = 2
         Me.rbBuildCCI0Key.Text = "0-Key Encrypted CCI (for Gateway)"
         Me.rbBuildCCI0Key.UseVisualStyleBackColor = true
         '
@@ -101,7 +101,7 @@ Partial Class ThreeDSFormatSelector
         Me.rbBuildCCIDec.Location = New System.Drawing.Point(119, 40)
         Me.rbBuildCCIDec.Name = "rbBuildCCIDec"
         Me.rbBuildCCIDec.Size = New System.Drawing.Size(322, 17)
-        Me.rbBuildCCIDec.TabIndex = 2
+        Me.rbBuildCCIDec.TabIndex = 1
         Me.rbBuildCCIDec.Text = "Decrypted CCI (for Citra or Sky 3DS/Gateway+CFW+Decrypt9)"
         Me.rbBuildCCIDec.UseVisualStyleBackColor = true
         '
@@ -132,7 +132,7 @@ Partial Class ThreeDSFormatSelector
         Me.btnBuildOutputBrowse.Location = New System.Drawing.Point(384, 4)
         Me.btnBuildOutputBrowse.Name = "btnBuildOutputBrowse"
         Me.btnBuildOutputBrowse.Size = New System.Drawing.Size(75, 23)
-        Me.btnBuildOutputBrowse.TabIndex = 18
+        Me.btnBuildOutputBrowse.TabIndex = 1
         Me.btnBuildOutputBrowse.Text = "Browse..."
         Me.btnBuildOutputBrowse.UseVisualStyleBackColor = true
         '
@@ -143,7 +143,7 @@ Partial Class ThreeDSFormatSelector
         Me.txtBuildDestination.Location = New System.Drawing.Point(85, 6)
         Me.txtBuildDestination.Name = "txtBuildDestination"
         Me.txtBuildDestination.Size = New System.Drawing.Size(293, 20)
-        Me.txtBuildDestination.TabIndex = 17
+        Me.txtBuildDestination.TabIndex = 0
         '
         'Label5
         '
