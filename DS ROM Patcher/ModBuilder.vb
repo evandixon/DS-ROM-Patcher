@@ -288,9 +288,6 @@ Public Class ModBuilder
                                 End Sub
         AddHandler f.LoadingStatusChanged, onProgressChanged
 
-        'TODO: remove
-        f.RunSynchronously = True
-
         Await f.RunForEach(Async Function(Item As String) As Task
                                Dim itemTrimmed = Item.Trim("\")
                                Dim patchMade As Boolean = False
