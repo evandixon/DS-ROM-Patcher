@@ -124,7 +124,7 @@
     <value>Complete</value>
   </data>
   <data name="ErrorUnknownInputType" xml:space="preserve">
-    <value>Unable to detect the source ROM type.  Please use one of the following command-line arguments when using a directory as the source: -source-nds, -source-3ds, -source-cia, or -source-cxi</value>
+    <value>Unable to detect the source ROM type.  Please use one of the following command-line arguments when using a directory as the source: -output-nds, -output-3ds, -output-cia, or -output-hans</value>
   </data>
   <data name="LoadingAnalzingFiles" xml:space="preserve">
     <value>Analyzing files...</value>

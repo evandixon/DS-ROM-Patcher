@@ -57,17 +57,17 @@ Public Class NDSand3DSCore
 
             'Repack the ROM
             If isDirectoryMode Then
-                If args.Contains("-source-nds") Then
+                If args.Contains("-output-nds") Then
                     outputFormat = DSFormat.NDS
-                ElseIf args.Contains("-source-3ds") Then
+                ElseIf args.Contains("-output-3ds") Then
                     If args.Contains("-key0") Then
                         outputFormat = DSFormat.Key0CCI
                     Else
                         outputFormat = DSFormat.DecCCI
                     End If
-                ElseIf args.Contains("-source-cia") Then
+                ElseIf args.Contains("-output-cia") Then
                     outputFormat = DSFormat.DecCIA
-                ElseIf args.Contains("-source-cxi") Then
+                ElseIf args.Contains("-output-hans") Then
                     outputFormat = DSFormat.HANS
                 Else
                     Throw New ApplicationException(My.Resources.Language.ErrorUnknownInputType)
