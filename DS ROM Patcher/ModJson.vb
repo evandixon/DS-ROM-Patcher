@@ -25,6 +25,7 @@
     Public Property DependenciesAfter As List(Of String)
     Public Property UpdateUrl As String
     Public Property Filename As String
+    Public Property GameCode As String
 
     Public Function GetDescription() As String
         If Name IsNot Nothing AndAlso Description IsNot Nothing Then

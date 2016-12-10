@@ -33,6 +33,8 @@ Partial Class CreateModWindow
         Me.btnCancel = New System.Windows.Forms.Button()
         Me.btnCreate = New System.Windows.Forms.Button()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.txtGameCode = New System.Windows.Forms.TextBox()
         Me.Label9 = New System.Windows.Forms.Label()
         Me.txtModDescription = New System.Windows.Forms.TextBox()
         Me.Label8 = New System.Windows.Forms.Label()
@@ -51,21 +53,21 @@ Partial Class CreateModWindow
         Me.lblStatus = New System.Windows.Forms.Label()
         Me.chbEnableAdd = New System.Windows.Forms.CheckBox()
         Me.chbEnableDelete = New System.Windows.Forms.CheckBox()
-        Me.GroupBox1.SuspendLayout()
-        Me.SuspendLayout()
+        Me.GroupBox1.SuspendLayout
+        Me.SuspendLayout
         '
         'txtOriginal
         '
-        Me.txtOriginal.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtOriginal.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtOriginal.Location = New System.Drawing.Point(68, 12)
         Me.txtOriginal.Name = "txtOriginal"
-        Me.txtOriginal.Size = New System.Drawing.Size(244, 20)
+        Me.txtOriginal.Size = New System.Drawing.Size(268, 20)
         Me.txtOriginal.TabIndex = 0
         '
         'Label1
         '
-        Me.Label1.AutoSize = True
+        Me.Label1.AutoSize = true
         Me.Label1.Location = New System.Drawing.Point(12, 15)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(45, 13)
@@ -74,7 +76,7 @@ Partial Class CreateModWindow
         '
         'Label2
         '
-        Me.Label2.AutoSize = True
+        Me.Label2.AutoSize = true
         Me.Label2.Location = New System.Drawing.Point(12, 42)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(50, 13)
@@ -83,78 +85,80 @@ Partial Class CreateModWindow
         '
         'txtModified
         '
-        Me.txtModified.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModified.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModified.Location = New System.Drawing.Point(68, 39)
         Me.txtModified.Name = "txtModified"
-        Me.txtModified.Size = New System.Drawing.Size(244, 20)
+        Me.txtModified.Size = New System.Drawing.Size(268, 20)
         Me.txtModified.TabIndex = 3
         '
         'btnOriginalBrowseFiles
         '
-        Me.btnOriginalBrowseFiles.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnOriginalBrowseFiles.Location = New System.Drawing.Point(318, 10)
+        Me.btnOriginalBrowseFiles.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.btnOriginalBrowseFiles.Location = New System.Drawing.Point(342, 10)
         Me.btnOriginalBrowseFiles.Name = "btnOriginalBrowseFiles"
         Me.btnOriginalBrowseFiles.Size = New System.Drawing.Size(125, 23)
         Me.btnOriginalBrowseFiles.TabIndex = 1
         Me.btnOriginalBrowseFiles.Text = "Browse Files..."
-        Me.btnOriginalBrowseFiles.UseVisualStyleBackColor = True
+        Me.btnOriginalBrowseFiles.UseVisualStyleBackColor = true
         '
         'btnOriginalBrowseFolders
         '
-        Me.btnOriginalBrowseFolders.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnOriginalBrowseFolders.Location = New System.Drawing.Point(449, 10)
+        Me.btnOriginalBrowseFolders.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.btnOriginalBrowseFolders.Location = New System.Drawing.Point(473, 10)
         Me.btnOriginalBrowseFolders.Name = "btnOriginalBrowseFolders"
         Me.btnOriginalBrowseFolders.Size = New System.Drawing.Size(125, 23)
         Me.btnOriginalBrowseFolders.TabIndex = 2
         Me.btnOriginalBrowseFolders.Text = "Browse Folders..."
-        Me.btnOriginalBrowseFolders.UseVisualStyleBackColor = True
+        Me.btnOriginalBrowseFolders.UseVisualStyleBackColor = true
         '
         'btnModifiedBrowseFolders
         '
-        Me.btnModifiedBrowseFolders.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnModifiedBrowseFolders.Location = New System.Drawing.Point(449, 37)
+        Me.btnModifiedBrowseFolders.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.btnModifiedBrowseFolders.Location = New System.Drawing.Point(473, 37)
         Me.btnModifiedBrowseFolders.Name = "btnModifiedBrowseFolders"
         Me.btnModifiedBrowseFolders.Size = New System.Drawing.Size(125, 23)
         Me.btnModifiedBrowseFolders.TabIndex = 5
         Me.btnModifiedBrowseFolders.Text = "Browse Folders..."
-        Me.btnModifiedBrowseFolders.UseVisualStyleBackColor = True
+        Me.btnModifiedBrowseFolders.UseVisualStyleBackColor = true
         '
         'btnModifiedBrowseFiles
         '
-        Me.btnModifiedBrowseFiles.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.btnModifiedBrowseFiles.Location = New System.Drawing.Point(318, 37)
+        Me.btnModifiedBrowseFiles.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.btnModifiedBrowseFiles.Location = New System.Drawing.Point(342, 37)
         Me.btnModifiedBrowseFiles.Name = "btnModifiedBrowseFiles"
         Me.btnModifiedBrowseFiles.Size = New System.Drawing.Size(125, 23)
         Me.btnModifiedBrowseFiles.TabIndex = 4
         Me.btnModifiedBrowseFiles.Text = "Browse Files..."
-        Me.btnModifiedBrowseFiles.UseVisualStyleBackColor = True
+        Me.btnModifiedBrowseFiles.UseVisualStyleBackColor = true
         '
         'btnCancel
         '
-        Me.btnCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.btnCancel.Location = New System.Drawing.Point(96, 384)
+        Me.btnCancel.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
+        Me.btnCancel.Location = New System.Drawing.Point(96, 416)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(75, 23)
         Me.btnCancel.TabIndex = 7
         Me.btnCancel.Text = "Cancel"
-        Me.btnCancel.UseVisualStyleBackColor = True
+        Me.btnCancel.UseVisualStyleBackColor = true
         '
         'btnCreate
         '
-        Me.btnCreate.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.btnCreate.Location = New System.Drawing.Point(15, 384)
+        Me.btnCreate.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
+        Me.btnCreate.Location = New System.Drawing.Point(15, 416)
         Me.btnCreate.Name = "btnCreate"
         Me.btnCreate.Size = New System.Drawing.Size(75, 23)
         Me.btnCreate.TabIndex = 6
         Me.btnCreate.Text = "Create"
-        Me.btnCreate.UseVisualStyleBackColor = True
+        Me.btnCreate.UseVisualStyleBackColor = true
         '
         'GroupBox1
         '
-        Me.GroupBox1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom)  _
+            Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.GroupBox1.Controls.Add(Me.Label10)
+        Me.GroupBox1.Controls.Add(Me.txtGameCode)
         Me.GroupBox1.Controls.Add(Me.Label9)
         Me.GroupBox1.Controls.Add(Me.txtModDescription)
         Me.GroupBox1.Controls.Add(Me.Label8)
@@ -171,14 +175,32 @@ Partial Class CreateModWindow
         Me.GroupBox1.Controls.Add(Me.txtModID)
         Me.GroupBox1.Location = New System.Drawing.Point(15, 65)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(559, 207)
+        Me.GroupBox1.Size = New System.Drawing.Size(583, 239)
         Me.GroupBox1.TabIndex = 10
-        Me.GroupBox1.TabStop = False
+        Me.GroupBox1.TabStop = false
         Me.GroupBox1.Text = "Metadata"
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = true
+        Me.Label10.Location = New System.Drawing.Point(6, 205)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(63, 13)
+        Me.Label10.TabIndex = 16
+        Me.Label10.Text = "Game Code"
+        '
+        'txtGameCode
+        '
+        Me.txtGameCode.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.txtGameCode.Location = New System.Drawing.Point(143, 202)
+        Me.txtGameCode.Name = "txtGameCode"
+        Me.txtGameCode.Size = New System.Drawing.Size(424, 20)
+        Me.txtGameCode.TabIndex = 7
         '
         'Label9
         '
-        Me.Label9.AutoSize = True
+        Me.Label9.AutoSize = true
         Me.Label9.Location = New System.Drawing.Point(8, 101)
         Me.Label9.Name = "Label9"
         Me.Label9.Size = New System.Drawing.Size(60, 13)
@@ -187,16 +209,16 @@ Partial Class CreateModWindow
         '
         'txtModDescription
         '
-        Me.txtModDescription.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModDescription.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModDescription.Location = New System.Drawing.Point(143, 98)
         Me.txtModDescription.Name = "txtModDescription"
-        Me.txtModDescription.Size = New System.Drawing.Size(400, 20)
-        Me.txtModDescription.TabIndex = 12
+        Me.txtModDescription.Size = New System.Drawing.Size(424, 20)
+        Me.txtModDescription.TabIndex = 3
         '
         'Label8
         '
-        Me.Label8.AutoSize = True
+        Me.Label8.AutoSize = true
         Me.Label8.Location = New System.Drawing.Point(8, 179)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(107, 13)
@@ -205,7 +227,7 @@ Partial Class CreateModWindow
         '
         'Label7
         '
-        Me.Label7.AutoSize = True
+        Me.Label7.AutoSize = true
         Me.Label7.Location = New System.Drawing.Point(8, 153)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(116, 13)
@@ -214,7 +236,7 @@ Partial Class CreateModWindow
         '
         'Label6
         '
-        Me.Label6.AutoSize = True
+        Me.Label6.AutoSize = true
         Me.Label6.Location = New System.Drawing.Point(8, 127)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(42, 13)
@@ -223,7 +245,7 @@ Partial Class CreateModWindow
         '
         'Label5
         '
-        Me.Label5.AutoSize = True
+        Me.Label5.AutoSize = true
         Me.Label5.Location = New System.Drawing.Point(8, 75)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(38, 13)
@@ -232,7 +254,7 @@ Partial Class CreateModWindow
         '
         'Label4
         '
-        Me.Label4.AutoSize = True
+        Me.Label4.AutoSize = true
         Me.Label4.Location = New System.Drawing.Point(8, 49)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(74, 13)
@@ -241,7 +263,7 @@ Partial Class CreateModWindow
         '
         'Label3
         '
-        Me.Label3.AutoSize = True
+        Me.Label3.AutoSize = true
         Me.Label3.Location = New System.Drawing.Point(8, 22)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(18, 13)
@@ -250,74 +272,74 @@ Partial Class CreateModWindow
         '
         'txtModDependenciesAfter
         '
-        Me.txtModDependenciesAfter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModDependenciesAfter.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModDependenciesAfter.Location = New System.Drawing.Point(143, 176)
         Me.txtModDependenciesAfter.Name = "txtModDependenciesAfter"
-        Me.txtModDependenciesAfter.Size = New System.Drawing.Size(400, 20)
-        Me.txtModDependenciesAfter.TabIndex = 5
+        Me.txtModDependenciesAfter.Size = New System.Drawing.Size(424, 20)
+        Me.txtModDependenciesAfter.TabIndex = 6
         '
         'txtModDependenciesBefore
         '
-        Me.txtModDependenciesBefore.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModDependenciesBefore.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModDependenciesBefore.Location = New System.Drawing.Point(143, 150)
         Me.txtModDependenciesBefore.Name = "txtModDependenciesBefore"
-        Me.txtModDependenciesBefore.Size = New System.Drawing.Size(400, 20)
-        Me.txtModDependenciesBefore.TabIndex = 4
+        Me.txtModDependenciesBefore.Size = New System.Drawing.Size(424, 20)
+        Me.txtModDependenciesBefore.TabIndex = 5
         '
         'txtModVersion
         '
-        Me.txtModVersion.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModVersion.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModVersion.Location = New System.Drawing.Point(143, 124)
         Me.txtModVersion.Name = "txtModVersion"
-        Me.txtModVersion.Size = New System.Drawing.Size(400, 20)
-        Me.txtModVersion.TabIndex = 3
+        Me.txtModVersion.Size = New System.Drawing.Size(424, 20)
+        Me.txtModVersion.TabIndex = 4
         Me.txtModVersion.Text = "1.0.0"
         '
         'txtModAuthor
         '
-        Me.txtModAuthor.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModAuthor.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModAuthor.Location = New System.Drawing.Point(143, 72)
         Me.txtModAuthor.Name = "txtModAuthor"
-        Me.txtModAuthor.Size = New System.Drawing.Size(400, 20)
+        Me.txtModAuthor.Size = New System.Drawing.Size(424, 20)
         Me.txtModAuthor.TabIndex = 2
         '
         'txtModName
         '
-        Me.txtModName.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModName.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModName.Location = New System.Drawing.Point(143, 46)
         Me.txtModName.Name = "txtModName"
-        Me.txtModName.Size = New System.Drawing.Size(400, 20)
+        Me.txtModName.Size = New System.Drawing.Size(424, 20)
         Me.txtModName.TabIndex = 1
         '
         'txtModID
         '
-        Me.txtModID.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.txtModID.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
         Me.txtModID.Location = New System.Drawing.Point(143, 19)
         Me.txtModID.Name = "txtModID"
-        Me.txtModID.Size = New System.Drawing.Size(400, 20)
+        Me.txtModID.Size = New System.Drawing.Size(424, 20)
         Me.txtModID.TabIndex = 0
         '
         'pbProgress
         '
-        Me.pbProgress.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.pbProgress.Location = New System.Drawing.Point(15, 352)
+        Me.pbProgress.Anchor = CType(((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left)  _
+            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.pbProgress.Location = New System.Drawing.Point(15, 384)
         Me.pbProgress.Maximum = 10000
         Me.pbProgress.Name = "pbProgress"
-        Me.pbProgress.Size = New System.Drawing.Size(559, 23)
+        Me.pbProgress.Size = New System.Drawing.Size(583, 23)
         Me.pbProgress.TabIndex = 11
         '
         'lblStatus
         '
-        Me.lblStatus.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.lblStatus.AutoSize = True
-        Me.lblStatus.Location = New System.Drawing.Point(12, 336)
+        Me.lblStatus.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
+        Me.lblStatus.AutoSize = true
+        Me.lblStatus.Location = New System.Drawing.Point(12, 368)
         Me.lblStatus.Name = "lblStatus"
         Me.lblStatus.Size = New System.Drawing.Size(38, 13)
         Me.lblStatus.TabIndex = 12
@@ -325,33 +347,33 @@ Partial Class CreateModWindow
         '
         'chbEnableAdd
         '
-        Me.chbEnableAdd.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.chbEnableAdd.AutoSize = True
-        Me.chbEnableAdd.Checked = True
+        Me.chbEnableAdd.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
+        Me.chbEnableAdd.AutoSize = true
+        Me.chbEnableAdd.Checked = true
         Me.chbEnableAdd.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chbEnableAdd.Location = New System.Drawing.Point(26, 278)
+        Me.chbEnableAdd.Location = New System.Drawing.Point(26, 310)
         Me.chbEnableAdd.Name = "chbEnableAdd"
         Me.chbEnableAdd.Size = New System.Drawing.Size(86, 17)
         Me.chbEnableAdd.TabIndex = 13
         Me.chbEnableAdd.Text = "Enable Adds"
-        Me.chbEnableAdd.UseVisualStyleBackColor = True
+        Me.chbEnableAdd.UseVisualStyleBackColor = true
         '
         'chbEnableDelete
         '
-        Me.chbEnableDelete.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.chbEnableDelete.AutoSize = True
-        Me.chbEnableDelete.Location = New System.Drawing.Point(26, 301)
+        Me.chbEnableDelete.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
+        Me.chbEnableDelete.AutoSize = true
+        Me.chbEnableDelete.Location = New System.Drawing.Point(26, 333)
         Me.chbEnableDelete.Name = "chbEnableDelete"
         Me.chbEnableDelete.Size = New System.Drawing.Size(98, 17)
         Me.chbEnableDelete.TabIndex = 14
         Me.chbEnableDelete.Text = "Enable Deletes"
-        Me.chbEnableDelete.UseVisualStyleBackColor = True
+        Me.chbEnableDelete.UseVisualStyleBackColor = true
         '
         'CreateModWindow
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6!, 13!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(587, 419)
+        Me.ClientSize = New System.Drawing.Size(611, 451)
         Me.Controls.Add(Me.chbEnableDelete)
         Me.Controls.Add(Me.chbEnableAdd)
         Me.Controls.Add(Me.lblStatus)
@@ -369,12 +391,12 @@ Partial Class CreateModWindow
         Me.Controls.Add(Me.txtOriginal)
         Me.Name = "CreateModWindow"
         Me.Text = "Create Mod"
-        Me.GroupBox1.ResumeLayout(False)
-        Me.GroupBox1.PerformLayout()
-        Me.ResumeLayout(False)
-        Me.PerformLayout()
+        Me.GroupBox1.ResumeLayout(false)
+        Me.GroupBox1.PerformLayout
+        Me.ResumeLayout(false)
+        Me.PerformLayout
 
-    End Sub
+End Sub
 
     Friend WithEvents txtOriginal As TextBox
     Friend WithEvents Label1 As Label
@@ -405,4 +427,6 @@ Partial Class CreateModWindow
     Friend WithEvents chbEnableDelete As CheckBox
     Friend WithEvents Label9 As Label
     Friend WithEvents txtModDescription As TextBox
+    Friend WithEvents Label10 As Label
+    Friend WithEvents txtGameCode As TextBox
 End Class

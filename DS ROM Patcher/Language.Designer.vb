@@ -83,6 +83,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to Unable to detect the source ROM type.  Please use one of the following command-line arguments when using a directory as the source: -output-nds, -output-3ds, -output-cia, or -output-hans.
+        '''</summary>
+        Friend Shared ReadOnly Property ErrorUnknownInputType() As String
+            Get
+                Return ResourceManager.GetString("ErrorUnknownInputType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized string similar to Analyzing files....
         '''</summary>
         Friend Shared ReadOnly Property LoadingAnalzingFiles() As String
@@ -115,6 +124,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property LoadingGeneratingPatch() As String
             Get
                 Return ResourceManager.GetString("LoadingGeneratingPatch", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to Modpack Zip Files.
+        '''</summary>
+        Friend Shared ReadOnly Property ModpackZip() As String
+            Get
+                Return ResourceManager.GetString("ModpackZip", resourceCulture)
             End Get
         End Property
         

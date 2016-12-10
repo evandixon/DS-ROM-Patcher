@@ -1,9 +1,9 @@
 ﻿Imports System.IO
-Imports DS_ROM_Patcher.Utilties
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.Core.Windows.Providers
 
 Public Class CreateModWindow
-    Public Sub New(patchers As List(Of FilePatcher))
+    Public Sub New(patchers As List(Of FilePatcher), modpackDirectory As String)
 
         ' This call is required by the designer.
         InitializeComponent()
@@ -13,6 +13,7 @@ Public Class CreateModWindow
         _FolderDialog = New FolderBrowserDialog
         _OpenFileDialog = New OpenFileDialog
         _OpenFileDialog.Filter = $"{My.Resources.Language.SupportedROMs}|*.nds;*.srl;*.3ds;*.cci;*.cxi;*.cia;|{My.Resources.Language.AllFiles}|*.*"
+        _modpackDirectory = modpackDirectory
     End Sub
 
     Private _CurrentPatchers As List(Of FilePatcher)
@@ -20,6 +21,8 @@ Public Class CreateModWindow
     Private _OpenFileDialog As OpenFileDialog
 
     Private _FolderDialog As FolderBrowserDialog
+
+    Private _modpackDirectory As String
 
     Private Property IsBuilding As Boolean
         Get
@@ -34,15 +37,17 @@ Public Class CreateModWindow
     Public Property CreatedModFilename As String
 
 #Region "Browse Buttons"
-    Private Sub btnOriginalBrowseFiles_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFiles.Click
+    Private Async Sub btnOriginalBrowseFiles_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFiles.Click
         If _OpenFileDialog.ShowDialog = DialogResult.OK Then
             txtOriginal.Text = _OpenFileDialog.FileName
+            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetGameID(_OpenFileDialog.FileName)
         End If
     End Sub
 
-    Private Sub btnOriginalBrowseFolders_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFolders.Click
+    Private Async Sub btnOriginalBrowseFolders_Click(sender As Object, e As EventArgs) Handles btnOriginalBrowseFolders.Click
         If _FolderDialog.ShowDialog = DialogResult.OK Then
             txtOriginal.Text = _FolderDialog.SelectedPath
+            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetGameID(_FolderDialog.SelectedPath)
         End If
     End Sub
 
@@ -66,16 +71,16 @@ Public Class CreateModWindow
     End Sub
 
     Private Async Sub btnCreate_Click(sender As Object, e As EventArgs) Handles btnCreate.Click
-        Await Build()
+        Await Build(_modpackDirectory)
         Close()
         DialogResult = DialogResult.OK
     End Sub
 
-    Private Async Function Build() As Task
+    Private Async Function Build(modpackDirectory As String) As Task
         IsBuilding = True
 
         Dim builder As New ModBuilder
-        builder.ModID = txtModID.Text
+        builder.ModId = txtModID.Text
         builder.ModName = txtModName.Text
         builder.ModAuthor = txtModAuthor.Text
         builder.ModDescription = txtModDescription.Text
@@ -85,11 +90,12 @@ Public Class CreateModWindow
         builder.SupportsAdd = chbEnableAdd.Checked
         builder.SupportsDelete = chbEnableDelete.Checked
         builder.CustomFilePatchers = _CurrentPatchers
+        builder.GameCode = txtGameCode.Text
 
-        Dim destination As String = Path.Combine(Environment.CurrentDirectory, "Mods", txtModName.Text & " v" & txtModVersion.Text & ".mod")
+        Dim destination As String = Path.Combine(modpackDirectory, "Mods", txtModName.Text & " v" & txtModVersion.Text & ".mod")
 
         AddHandler builder.BuildStatusChanged, AddressOf OnProgressChanged
-        Await builder.DoBuild(txtOriginal.Text, txtModified.Text, destination, New WindowsIOProvider)
+        Await builder.BuildMod(txtOriginal.Text, txtModified.Text, destination, New WindowsIOProvider)
         RemoveHandler builder.BuildStatusChanged, AddressOf OnProgressChanged
 
         CreatedModFilename = destination

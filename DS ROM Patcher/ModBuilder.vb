@@ -4,6 +4,7 @@ Imports System.Text.RegularExpressions
 Imports DS_ROM_Patcher.Utilities
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.Core.Windows.Utilities
 
 Public Class ModBuilder
     Implements IReportProgress
@@ -85,7 +86,7 @@ Public Class ModBuilder
     Dim _isBuildComplete As Boolean
 #End Region
 
-    Public Property ModID As String
+    Public Property ModId As String
 
     Public Property ModName As String
 
@@ -106,6 +107,8 @@ Public Class ModBuilder
     Public Property SupportsDelete As Boolean
 
     Public Property CustomFilePatchers As List(Of FilePatcher)
+
+    Public Property GameCode As String
 
     Private ReadOnly Property ModTempDir As String
         Get
@@ -128,12 +131,8 @@ Public Class ModBuilder
         Return out
     End Function
 
-    ''' <summary>
-    ''' 
-    ''' </summary>
-    ''' <returns></returns>
     ''' <remarks>If this is overridden, do custom work, THEN use MyBase.Build</remarks>
-    Public Async Function DoBuild(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IOProvider) As Task
+    Public Async Function BuildMod(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IOProvider) As Task
         IsBuildComplete = False
 
         Dim modTempFiles = Path.Combine(ModTempDir, "Files")
@@ -143,12 +142,13 @@ Public Class ModBuilder
         Dim actions As New ModJson
         actions.DependenciesBefore = ModDependenciesBefore
         actions.DependenciesAfter = ModDependenciesAfter
-        actions.ID = ModID
+        actions.ID = ModId
         actions.Name = ModName
         actions.Version = ModVersion
         actions.Author = ModAuthor
         actions.Description = ModDescription
         actions.UpdateUrl = Homepage
+        actions.GameCode = GameCode
 
         Await Task.Run(Async Function() As Task
                            Me.BuildProgress = 0
@@ -261,7 +261,7 @@ Public Class ModBuilder
         '-Copy and write files
         Await FileSystem.ReCreateDirectory(ModTempDir, provider)
 
-        File.WriteAllText(IO.Path.Combine(ModTempDir, "mod.json"), Json.Serialize(actions))
+        File.WriteAllText(IO.Path.Combine(ModTempDir, "mod.json"), SkyEditor.Core.Utilities.Json.Serialize(actions))
 
         Me.BuildProgress = 0
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
@@ -287,9 +287,6 @@ Public Class ModBuilder
                                     BuildProgress = e.Progress
                                 End Sub
         AddHandler f.LoadingStatusChanged, onProgressChanged
-
-        'TODO: remove
-        f.RunSynchronously = True
 
         Await f.RunForEach(Async Function(Item As String) As Task
                                Dim itemTrimmed = Item.Trim("\")
@@ -359,4 +356,42 @@ Public Class ModBuilder
         BuildStatusMessage = My.Resources.Language.Complete
         IsBuildComplete = True
     End Function
+
+    ''' <summary>
+    ''' Copies the patcher program (aka the code library/program that contains this function) to the given directory.
+    ''' </summary>
+    Public Shared Sub CopyPatcherProgram(modpackDirectory As String)
+        Dim currentAssembly = GetType(ModBuilder).Assembly
+        Dim referenced = WindowsReflectionHelpers.GetAssemblyDependencies(currentAssembly)
+        For Each item In referenced.Concat({currentAssembly.Location})
+            File.Copy(item, Path.Combine(modpackDirectory, Path.GetFileName(item)), True)
+        Next
+    End Sub
+
+    Public Shared Sub CopyMod(modFilename As String, modpackDirectory As String, Optional overwrite As Boolean = True)
+        Dim modsDir = Path.Combine(modpackDirectory, "Mods")
+        If Not Directory.Exists(modsDir) Then
+            Directory.CreateDirectory(modsDir)
+        End If
+
+        File.Copy(modFilename, Path.Combine(modsDir, Path.GetFileName(modFilename)), overwrite)
+    End Sub
+
+    Public Shared Sub ZipModpack(modpackDirectory As String, zipFilename As String)
+        Zip.Zip(modpackDirectory, zipFilename)
+    End Sub
+
+    Public Shared Function GetModpackInfo(modpackDirectory As String) As ModpackInfo
+        Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
+        If File.Exists(modpackInfoFilename) Then
+            Return SkyEditor.Core.Windows.Utilities.Json.DeserializeFromFile(Of ModpackInfo)(modpackInfoFilename)
+        Else
+            Return New ModpackInfo
+        End If
+    End Function
+
+    Public Shared Sub SaveModpackInfo(modpackDirectory As String, info As ModpackInfo)
+        Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
+        SkyEditor.Core.Windows.Utilities.Json.SerializeToFile(modpackInfoFilename, info)
+    End Sub
 End Class

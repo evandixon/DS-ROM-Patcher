@@ -1,5 +1,6 @@
 ﻿Imports System.IO
 Imports System.Text.RegularExpressions
+Imports SkyEditor.Core.Utilities
 
 Public Class NDSand3DSCore
     Inherits PatcherCore
@@ -12,16 +13,14 @@ Public Class NDSand3DSCore
         End If
     End Sub
 
-    Public Overrides Async Function RunPatch(patchers As List(Of FilePatcher), modpack As ModpackInfo, mods As IEnumerable(Of ModFile), Optional destinationPath As String = Nothing) As Task
-        Dim currentDirectory = Environment.CurrentDirectory
-        Dim args = Environment.GetCommandLineArgs
-        Dim toolsDir = Path.Combine(currentDirectory, "Tools")
+    Public Overrides Async Function RunPatch(modpackDirectory As String, tempDirectory As String, patchers As List(Of FilePatcher), modpack As ModpackInfo, mods As IEnumerable(Of ModFile), Optional destinationPath As String = Nothing) As Task
+        Dim args = Environment.GetCommandLineArgs        
+        Dim toolsDir = Path.Combine(modpackDirectory, "Tools")
         Dim patchersDir = Path.Combine(toolsDir, "Patchers")
-        Dim ROMDirectory = Path.Combine(toolsDir, "dstemp")
-        Dim modTempDirectory = Path.Combine(toolsDir, "modstemp")
+        Dim ROMDirectory = Path.Combine(tempDirectory, "dstemp")
+        Dim modTempDirectory = Path.Combine(tempDirectory, "modstemp")
         Dim isDirectoryMode As Boolean = False
-        Dim isHansMode As Boolean = False
-        Dim isKey0CCIMode As Boolean = False
+        Dim outputFormat As DSFormat
 
         Using c As New DotNet3dsToolkit.Converter
             'Extract the ROM
@@ -54,89 +53,86 @@ Public Class NDSand3DSCore
             'Apply the Mods
             Const RepackMessage As String = "Applying the mods..."
             RaiseProgressChanged(1 / 3, RepackMessage)
-            Await ModFile.ApplyPatches(mods, patchers, currentDirectory, ROMDirectory)
+            Await ModFile.ApplyPatches(mods, patchers, modpackDirectory, tempDirectory, ROMDirectory)
 
             'Repack the ROM
-            Dim sourceExt As String = ""
-
             If isDirectoryMode Then
-                If args.Contains("-source-nds") Then
-                    sourceExt = ".nds"
-                ElseIf args.Contains("-source-3ds") Then
+                If args.Contains("-output-nds") Then
+                    outputFormat = DSFormat.NDS
+                ElseIf args.Contains("-output-3ds") Then
                     If args.Contains("-key0") Then
-                        isKey0CCIMode = True
+                        outputFormat = DSFormat.Key0CCI
+                    Else
+                        outputFormat = DSFormat.DecCCI
                     End If
-                    sourceExt = ".3ds"
-                ElseIf args.Contains("-source-cia") Then
-                    sourceExt = ".cia"
-                ElseIf args.Contains("-source-cxi") Then
-                    isHansMode = True
+                ElseIf args.Contains("-output-cia") Then
+                    outputFormat = DSFormat.DecCIA
+                ElseIf args.Contains("-output-hans") Then
+                    outputFormat = DSFormat.HANS
                 Else
-                    Throw New ApplicationException("Unable to detect the source ROM type.  Please use one of the following command-line arguments when using a directory as the source: -source-nds, -source-3ds, -source-cia, or -source-cxi")
+                    Throw New ApplicationException(My.Resources.Language.ErrorUnknownInputType)
                 End If
             Else
-                sourceExt = Path.GetExtension(SelectedFilename).ToLower
+                Select Case Await DotNet3dsToolkit.MetadataReader.GetSystem(SelectedFilename)
+                    Case DotNet3dsToolkit.SystemType.NDS
+                        outputFormat = DSFormat.NDS
+                    Case DotNet3dsToolkit.SystemType.ThreeDS
+                        outputFormat = DSFormat.Auto3DS
+                    Case Else
+                        Throw New ApplicationException(My.Resources.Language.ErrorUnknownInputType)
+                End Select
             End If
 
             RaiseProgressChanged(2 / 3, "Repacking the ROM...", True)
-            If Not isHansMode AndAlso String.IsNullOrEmpty(destinationPath) AndAlso Not sourceExt = ".nds" AndAlso Not sourceExt = ".srl" Then
-                If MessageBox.Show("Would you like to output to HANS?  (Say no to output to .3DS or .CIA)", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.Yes Then
-                    isHansMode = True
+            If Not outputFormat = DSFormat.HANS AndAlso String.IsNullOrEmpty(destinationPath) AndAlso Not outputFormat = DSFormat.NDS Then
+ShowFormatDialog: Dim formatDialog As New ThreeDSFormatSelector
+                If Not formatDialog.ShowDialog = DialogResult.OK Then
+                    If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.Yes Then
+                        GoTo StopPatching
+                    Else
+                        GoTo ShowFormatDialog
+                    End If
+                Else
+                    outputFormat = formatDialog.SelectedFormat
+                    destinationPath = formatDialog.SelectedPath
                 End If
             End If
 
-            If isHansMode OrElse sourceExt = ".cxi" Then
-                If String.IsNullOrEmpty(destinationPath) Then
-                    Dim d As New FolderBrowserDialog
-                    d.Description = "Please select the root of your SD card."
-ShowFolderDialog3DS: If d.ShowDialog = DialogResult.OK Then
-                        destinationPath = d.SelectedPath
-                    Else
-                        If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
-                            GoTo ShowFolderDialog3DS
-                        End If
-                    End If
-                End If
+            '- Watch progress changed event
+            Dim handler = Sub(sender As Object, e As ProgressReportedEventArgs)
+                              RaiseProgressChanged(2 / 3 + (1 / 3 * e.Progress), "Repacking the ROM...", e.IsIndeterminate)
+                          End Sub
 
-                Await c.BuildHans(ROMDirectory, destinationPath, modpack.ShortName)
-            Else
-                If String.IsNullOrEmpty(destinationPath) Then
-ShowSaveDialogNDS:  Dim s As New SaveFileDialog
-                    Select Case sourceExt
-                        Case ".nds", ".srl"
-                            s.Filter = "NDS ROMs|*.nds;*.srl|All Files|*.*"
-                        Case ".3ds", ".cia"
-                            s.Filter = "3DS ROMs|*.3ds;*.3dz;*.cci|CIA Files|*.cia|All Files|*.*"
-                            If sourceExt = ".cia" Then
-                                s.FilterIndex = 1
-                            End If
-                        Case Else
-                            s.Filter = "All Files|*.*"
-                    End Select
-                    If s.ShowDialog = DialogResult.OK Then
-                        destinationPath = s.FileName
-                    Else
-                        If MessageBox.Show("Are you sure you want to cancel the patching process?", "DS ROM Patcher", MessageBoxButtons.YesNo) = DialogResult.No Then
-                            GoTo ShowSaveDialogNDS
-                        Else
-                            GoTo StopPatching
-                        End If
-                    End If
-                End If
+            AddHandler c.UnpackProgressed, handler
 
-                'Todo: watch progress changed event
-                Await c.BuildAuto(ROMDirectory, destinationPath)
-            End If
+            '- Build
+            Select Case outputFormat
+                Case DSFormat.HANS
+                    Await c.BuildHans(ROMDirectory, destinationPath, modpack.ShortName)
+                Case DSFormat.Auto, DSFormat.Auto3DS
+                    Await c.BuildAuto(ROMDirectory, destinationPath)
+                Case DSFormat.DecCCI
+                    Await c.Build3DSDecrypted(ROMDirectory, destinationPath)
+                Case DSFormat.DecCIA
+                    Await c.BuildCia(ROMDirectory, destinationPath)
+                Case DSFormat.Key0CCI
+                    Await c.Build3DS0Key(ROMDirectory, destinationPath)
+                Case DSFormat.NDS
+                    Await c.BuildNDS(ROMDirectory, destinationPath)
+            End Select
+
+            RemoveHandler c.UnpackProgressed, handler
+
 StopPatching: RaiseProgressChanged(1, "Ready")
 
             'Cleanup
-            If IO.Directory.Exists(ROMDirectory) Then IO.Directory.Delete(ROMDirectory, True)
+            If Directory.Exists(ROMDirectory) Then Directory.Delete(ROMDirectory, True)
         End Using
     End Function
 
     Public Overrides Async Function SupportsMod(modpack As ModpackInfo, modToCheck As ModJson) As Task(Of Boolean)
         Dim currentCode = Await DotNet3dsToolkit.MetadataReader.GetGameID(SelectedFilename)
-        Dim supportedCode = New Regex(modpack.GameCode)
+        Dim supportedCode = New Regex(modToCheck.GameCode)
         Return supportedCode.IsMatch(currentCode)
     End Function
 End Class

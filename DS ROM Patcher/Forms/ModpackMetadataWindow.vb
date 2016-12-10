@@ -24,14 +24,14 @@
         Dim o As New OpenFileDialog
         o.Filter = $"{My.Resources.Language.SupportedROMs}|*.nds;*.srl;*.3ds;*.cci;*.cxi;*.cia;|{My.Resources.Language.AllFiles}|*.*"
         If o.ShowDialog = DialogResult.OK Then
-            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetROMGameID(o.FileName)
+            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetGameID(o.FileName)
         End If
     End Sub
 
     Private Async Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
         Dim f As New FolderBrowserDialog
         If f.ShowDialog = DialogResult.OK Then
-            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetROMGameID(f.SelectedPath)
+            txtGameCode.Text = Await DotNet3dsToolkit.MetadataReader.GetGameID(f.SelectedPath)
         End If
     End Sub
 
