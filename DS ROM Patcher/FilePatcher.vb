@@ -65,7 +65,13 @@ Public Class FilePatcher
     End Function
 
     Public Sub CopyToolsToDirectory(newToolsDir As String)
-        For Each item In SerializableInfo.Dependencies.Concat({SerializableInfo.CreatePatchProgram, SerializableInfo.ApplyPatchProgram}).Distinct
+        Dim tools As New List(Of String)
+        If SerializableInfo.Dependencies IsNot Nothing
+            tools.AddRange(SerializableInfo.Dependencies)
+        End If
+        tools.Add(SerializableInfo.CreatePatchProgram)
+        tools.Add(SerializableInfo.ApplyPatchProgram)
+        For Each item In tools.Distinct
             Dim source As String = Path.Combine(ToolsDirectory, item)
             Dim dest As String = Path.Combine(newToolsDir, item)
 
