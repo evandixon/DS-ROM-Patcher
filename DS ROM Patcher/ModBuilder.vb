@@ -132,7 +132,7 @@ Public Class ModBuilder
     End Function
 
     ''' <remarks>If this is overridden, do custom work, THEN use MyBase.Build</remarks>
-    Public Async Function BuildMod(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IOProvider) As Task
+    Public Async Function BuildMod(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IIOProvider) As Task
         IsBuildComplete = False
 
         Dim modTempFiles = Path.Combine(ModTempDir, "Files")
