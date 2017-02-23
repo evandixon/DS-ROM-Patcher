@@ -1,6 +1,7 @@
 ﻿Imports System.IO
+Imports System.IO.Compression
+Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
-Imports SkyEditor.Core.Windows.Providers
 
 Public Class FilePatcher
 
@@ -8,19 +9,19 @@ Public Class FilePatcher
     Public Shared Function DeserializePatcherList(patchersJsonFilename As String, toolsDirectory As String) As List(Of FilePatcher)
         Dim out As New List(Of FilePatcher)
         If File.Exists(patchersJsonFilename) Then
-            For Each item In Json.DeserializeFromFile(Of List(Of FilePatcherJson))(patchersJsonFilename, New WindowsIOProvider)
+            For Each item In Json.DeserializeFromFile(Of List(Of FilePatcherJson))(patchersJsonFilename, New PhysicalIOProvider)
                 out.Add(New FilePatcher(item, toolsDirectory))
             Next
         End If
         Return out
     End Function
 
-    Public Shared Sub SerializePatherListToFile(patchers As List(Of FilePatcher), filename As String, provider As WindowsIOProvider)
+    Public Shared Sub SerializePatherListToFile(patchers As List(Of FilePatcher), filename As String, provider As IIOProvider)
         Dim jsons As List(Of FilePatcherJson) = patchers.Select(Function(x) x.SerializableInfo).Distinct.ToList
         Json.SerializeToFile(filename, jsons, provider)
     End Sub
 
-    Public Shared Sub ImportCurrentPatcherPack(patcherZipFilename As String, modpackDirectory As string)
+    Public Shared Sub ImportCurrentPatcherPack(patcherZipFilename As String, modpackDirectory As String)
         'Open existing patchers
         Dim patchersDir = Path.Combine(modpackDirectory, "Tools", "Patchers")
         Dim patchersFile = Path.Combine(patchersDir, "patchers.json")
@@ -28,22 +29,22 @@ Public Class FilePatcher
 
         'Unzip importing patchers
         Dim tempDirectory As String = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Temp-" & Guid.NewGuid.ToString)
-        Zip.Unzip(patcherZipFilename, tempDirectory)
+        ZipFile.ExtractToDirectory(patcherZipFilename, tempDirectory)
 
         'Copy patchers
         For Each item In DeserializePatcherList(Path.Combine(tempDirectory, "patchers.json"), tempDirectory)
             item.CopyToolsToDirectory(patchersDir)
             currentPatchers.Add(item)
         Next
-        SerializePatherListToFile(currentPatchers, patchersFile, New WindowsIOProvider)
+        SerializePatherListToFile(currentPatchers, patchersFile, New PhysicalIOProvider)
 
         'Cleanup
         Directory.Delete(tempDirectory, True)
     End Sub
 
-    Public Shared Sub ExportCurrentPatcherPack(patcherZipFilename As String, modpackDirectory As string)
+    Public Shared Sub ExportCurrentPatcherPack(patcherZipFilename As String, modpackDirectory As String)
         Dim patchersDir = Path.Combine(modpackDirectory, "Tools", "Patchers")
-        Zip.Zip(patchersDir, patcherZipFilename)
+        ZipFile.CreateFromDirectory(patchersDir, patcherZipFilename)
     End Sub
 
     Public Sub New(serializableInfo As FilePatcherJson, toolsDirectory As String)

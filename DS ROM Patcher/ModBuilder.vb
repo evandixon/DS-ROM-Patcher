@@ -1,10 +1,10 @@
 ﻿Imports System.IO
+Imports System.IO.Compression
 Imports System.Security.Cryptography
 Imports System.Text.RegularExpressions
 Imports DS_ROM_Patcher.Utilities
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
-Imports SkyEditor.Core.Windows.Utilities
 
 Public Class ModBuilder
     Implements IReportProgress
@@ -259,9 +259,9 @@ Public Class ModBuilder
                        End Function)
 
         '-Copy and write files
-        Await FileSystem.ReCreateDirectory(ModTempDir, provider)
+        Await FileSystem.EnsureDirectoryEmpty(ModTempDir, provider)
 
-        File.WriteAllText(IO.Path.Combine(ModTempDir, "mod.json"), SkyEditor.Core.Utilities.Json.Serialize(actions))
+        File.WriteAllText(Path.Combine(ModTempDir, "mod.json"), SkyEditor.Core.Utilities.Json.Serialize(actions))
 
         Me.BuildProgress = 0
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
@@ -283,12 +283,13 @@ Public Class ModBuilder
 
         Dim f As New AsyncFor
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
-        Dim onProgressChanged = Sub(sender As Object, e As LoadingStatusChangedEventArgs)
+        Dim onProgressChanged = Sub(sender As Object, e As ProgressReportedEventArgs)
                                     BuildProgress = e.Progress
                                 End Sub
         AddHandler f.LoadingStatusChanged, onProgressChanged
 
-        Await f.RunForEach(Async Function(Item As String) As Task
+        Await f.RunForEach(actions.ToUpdate,
+                           Async Function(Item As String) As Task
                                Dim itemTrimmed = Item.Trim("\")
                                Dim patchMade As Boolean = False
 
@@ -328,7 +329,7 @@ Public Class ModBuilder
                                        Await xdelta.CreatePatch(oldFile, newFile, deltaFile)
                                    End Using
                                End If
-                           End Function, actions.ToUpdate)
+                           End Function)
 
         '-Copy Patcher programs for non-standard file formats (xdelta will be copied with the modpack)
         '-- Create the tools directory if it doesn't exist
@@ -345,7 +346,7 @@ Public Class ModBuilder
         FilePatcher.SerializePatherListToFile(patchers, Path.Combine(modTempTools, "patchers.json"), provider)
 
         '- Zip Mod
-        Zip.Zip(ModTempDir, outputModFilename)
+        ZipFile.CreateFromDirectory(ModTempDir, outputModFilename)
 
         '- Cleanup
         Directory.Delete(ModTempDir, True)
@@ -378,13 +379,13 @@ Public Class ModBuilder
     End Sub
 
     Public Shared Sub ZipModpack(modpackDirectory As String, zipFilename As String)
-        Zip.Zip(modpackDirectory, zipFilename)
+        ZipFile.CreateFromDirectory(modpackDirectory, zipFilename)
     End Sub
 
     Public Shared Function GetModpackInfo(modpackDirectory As String) As ModpackInfo
         Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
         If File.Exists(modpackInfoFilename) Then
-            Return SkyEditor.Core.Windows.Utilities.Json.DeserializeFromFile(Of ModpackInfo)(modpackInfoFilename)
+            Return Json.DeserializeFromFile(Of ModpackInfo)(modpackInfoFilename, New PhysicalIOProvider)
         Else
             Return New ModpackInfo
         End If
@@ -392,6 +393,6 @@ Public Class ModBuilder
 
     Public Shared Sub SaveModpackInfo(modpackDirectory As String, info As ModpackInfo)
         Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
-        SkyEditor.Core.Windows.Utilities.Json.SerializeToFile(modpackInfoFilename, info)
+        Json.SerializeToFile(modpackInfoFilename, info, New PhysicalIOProvider)
     End Sub
 End Class

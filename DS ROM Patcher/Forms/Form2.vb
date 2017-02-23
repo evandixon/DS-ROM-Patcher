@@ -1,9 +1,8 @@
 ﻿Imports System.ComponentModel
 Imports System.IO
+Imports System.IO.Compression
 Imports System.Reflection
-Imports ICSharpCode.SharpZipLib.Zip
 Imports SkyEditor.Core.Utilities
-Imports SkyEditor.Core.Windows.Providers
 
 Public Class Form2
 
@@ -69,11 +68,10 @@ Public Class Form2
             For Each item In modFiles
                 pbProgress.Value = completed / modFiles.Count
 
-                Dim z As New FastZip
-                If Not IO.Directory.Exists(Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item))) Then
-                    IO.Directory.CreateDirectory(Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item)))
+                If Not Directory.Exists(Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item))) Then
+                    Directory.CreateDirectory(Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item)))
                 End If
-                z.ExtractZip(item, Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item)), ".*")
+                ZipFile.ExtractToDirectory(item, Path.Combine(modTempDirectory, Path.GetFileNameWithoutExtension(item)))
 
                 completed += 1
             Next
@@ -161,7 +159,7 @@ Public Class Form2
             If Not Directory.Exists(extractedModDirectory) Then
                 Directory.CreateDirectory(extractedModDirectory)
             End If
-            Zip.Unzip(item, extractedModDirectory)
+            ZipFile.ExtractToDirectory(item, extractedModDirectory)
 
             'Then open the JSON and add it
             Dim jsonFile = Path.Combine(extractedModDirectory, "mod.json")
