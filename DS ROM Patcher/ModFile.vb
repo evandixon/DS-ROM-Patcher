@@ -1,12 +1,12 @@
 ﻿Imports System.IO
 Imports DS_ROM_Patcher.Analysis
 Imports DS_ROM_Patcher.Utilities
+Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
-Imports SkyEditor.Core.Windows.Providers
 
 Public Class ModFile
     Public Sub New(Filename As String)
-        Dim provider As New WindowsIOProvider
+        Dim provider As New PhysicalIOProvider
         Me.ModDetails = Json.DeserializeFromFile(Of ModJson)(Filename, provider)
         Me.ID = Me.ModDetails.ID
         Me.Name = Me.ModDetails.Name
@@ -120,7 +120,7 @@ Public Class ModFile
                     For Each patch In fileAnalysis.Patches
                         Dim patchFile = Path.Combine(FilesPath, patch.Key)
                         Dim patcher = patch.Value
-                        Dim tempFilename As String = Path.Combine(tempDirectory,  "tempFile")
+                        Dim tempFilename As String = Path.Combine(tempDirectory, "tempFile")
 
                         'Run the patcher
                         If patcher Is Nothing Then
