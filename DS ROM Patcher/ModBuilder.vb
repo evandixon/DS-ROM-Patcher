@@ -113,7 +113,7 @@ Public Class ModBuilder
     Private ReadOnly Property ModTempDir As String
         Get
             If _modTempDir Is Nothing Then
-                _modTempDir = IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DS-ROM-Patcher-" & Guid.NewGuid.ToString)
+                _modTempDir = IO.Path.Combine(Path.GetTempPath, "DS-ROM-Patcher-" & Guid.NewGuid.ToString)
             End If
             Return _modTempDir
         End Get
