@@ -286,7 +286,7 @@ Public Class ModBuilder
         Dim onProgressChanged = Sub(sender As Object, e As ProgressReportedEventArgs)
                                     BuildProgress = e.Progress
                                 End Sub
-        AddHandler f.LoadingStatusChanged, onProgressChanged
+        AddHandler f.ProgressChanged, onProgressChanged
 
         Await f.RunForEach(actions.ToUpdate,
                            Async Function(Item As String) As Task
