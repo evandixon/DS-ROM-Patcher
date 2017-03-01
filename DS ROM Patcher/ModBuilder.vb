@@ -259,7 +259,7 @@ Public Class ModBuilder
                        End Function)
 
         '-Copy and write files
-        Await FileSystem.EnsureDirectoryEmpty(ModTempDir, provider)
+        Await FileSystem.EnsureDirectoryExistsEmpty(ModTempDir, provider)
 
         File.WriteAllText(Path.Combine(ModTempDir, "mod.json"), SkyEditor.Core.Utilities.Json.Serialize(actions))
 
@@ -346,6 +346,9 @@ Public Class ModBuilder
         FilePatcher.SerializePatherListToFile(patchers, Path.Combine(modTempTools, "patchers.json"), provider)
 
         '- Zip Mod
+        If File.Exists(outputModFilename) Then
+            File.Delete(outputModFilename)
+        End If
         ZipFile.CreateFromDirectory(ModTempDir, outputModFilename)
 
         '- Cleanup
