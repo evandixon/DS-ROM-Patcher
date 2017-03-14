@@ -74,8 +74,8 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNet3dsToolkit, Version=1.4.11.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNet3dsToolkit.1.4.11-CI9\lib\net46\DotNet3dsToolkit.dll</HintPath>
+    <Reference Include="DotNet3dsToolkit, Version=1.4.11.14, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNet3dsToolkit.1.4.11-CI14\lib\net46\DotNet3dsToolkit.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
