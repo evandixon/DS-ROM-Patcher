@@ -366,7 +366,7 @@ Public Class ModBuilder
     ''' </summary>
     Public Shared Sub CopyPatcherProgram(modpackDirectory As String)
         Dim currentAssembly = GetType(ModBuilder).Assembly
-        Dim referenced = WindowsReflectionHelpers.GetAssemblyDependencies(currentAssembly)
+        Dim referenced = ReflectionHelpers.GetAssemblyDependencies(currentAssembly)
         For Each item In referenced.Concat({currentAssembly.Location})
             File.Copy(item, Path.Combine(modpackDirectory, Path.GetFileName(item)), True)
         Next
