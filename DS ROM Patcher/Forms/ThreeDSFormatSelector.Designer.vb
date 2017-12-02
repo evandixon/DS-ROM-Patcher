@@ -33,24 +33,26 @@ Partial Class ThreeDSFormatSelector
         Me.btnBuildOutputBrowse = New System.Windows.Forms.Button()
         Me.txtBuildDestination = New System.Windows.Forms.TextBox()
         Me.Label5 = New System.Windows.Forms.Label()
-        Me.GroupBox2.SuspendLayout
-        Me.SuspendLayout
+        Me.rbLuma = New System.Windows.Forms.RadioButton()
+        Me.GroupBox2.SuspendLayout()
+        Me.SuspendLayout()
         '
         'btnBuild
         '
-        Me.btnBuild.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left),System.Windows.Forms.AnchorStyles)
-        Me.btnBuild.Location = New System.Drawing.Point(12, 173)
+        Me.btnBuild.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.btnBuild.Location = New System.Drawing.Point(12, 199)
         Me.btnBuild.Name = "btnBuild"
         Me.btnBuild.Size = New System.Drawing.Size(75, 23)
         Me.btnBuild.TabIndex = 3
         Me.btnBuild.Text = "OK"
-        Me.btnBuild.UseVisualStyleBackColor = true
+        Me.btnBuild.UseVisualStyleBackColor = True
         '
         'GroupBox2
         '
-        Me.GroupBox2.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom)  _
-            Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.GroupBox2.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.GroupBox2.Controls.Add(Me.rbLuma)
         Me.GroupBox2.Controls.Add(Me.rbBuildHANS)
         Me.GroupBox2.Controls.Add(Me.rbBuildCCI0Key)
         Me.GroupBox2.Controls.Add(Me.rbBuildCIA)
@@ -59,55 +61,55 @@ Partial Class ThreeDSFormatSelector
         Me.GroupBox2.Controls.Add(Me.rbBuildAuto)
         Me.GroupBox2.Location = New System.Drawing.Point(15, 32)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(444, 135)
+        Me.GroupBox2.Size = New System.Drawing.Size(444, 161)
         Me.GroupBox2.TabIndex = 2
-        Me.GroupBox2.TabStop = false
+        Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "Options"
         '
         'rbBuildHANS
         '
-        Me.rbBuildHANS.AutoSize = true
+        Me.rbBuildHANS.AutoSize = True
         Me.rbBuildHANS.Location = New System.Drawing.Point(119, 109)
         Me.rbBuildHANS.Name = "rbBuildHANS"
         Me.rbBuildHANS.Size = New System.Drawing.Size(55, 17)
         Me.rbBuildHANS.TabIndex = 4
-        Me.rbBuildHANS.TabStop = true
+        Me.rbBuildHANS.TabStop = True
         Me.rbBuildHANS.Text = "HANS"
-        Me.rbBuildHANS.UseVisualStyleBackColor = true
+        Me.rbBuildHANS.UseVisualStyleBackColor = True
         '
         'rbBuildCCI0Key
         '
-        Me.rbBuildCCI0Key.AutoSize = true
+        Me.rbBuildCCI0Key.AutoSize = True
         Me.rbBuildCCI0Key.Location = New System.Drawing.Point(119, 63)
         Me.rbBuildCCI0Key.Name = "rbBuildCCI0Key"
         Me.rbBuildCCI0Key.Size = New System.Drawing.Size(189, 17)
         Me.rbBuildCCI0Key.TabIndex = 2
         Me.rbBuildCCI0Key.Text = "0-Key Encrypted CCI (for Gateway)"
-        Me.rbBuildCCI0Key.UseVisualStyleBackColor = true
+        Me.rbBuildCCI0Key.UseVisualStyleBackColor = True
         '
         'rbBuildCIA
         '
-        Me.rbBuildCIA.AutoSize = true
+        Me.rbBuildCIA.AutoSize = True
         Me.rbBuildCIA.Location = New System.Drawing.Point(119, 86)
         Me.rbBuildCIA.Name = "rbBuildCIA"
         Me.rbBuildCIA.Size = New System.Drawing.Size(94, 17)
         Me.rbBuildCIA.TabIndex = 3
         Me.rbBuildCIA.Text = "Decrypted CIA"
-        Me.rbBuildCIA.UseVisualStyleBackColor = true
+        Me.rbBuildCIA.UseVisualStyleBackColor = True
         '
         'rbBuildCCIDec
         '
-        Me.rbBuildCCIDec.AutoSize = true
+        Me.rbBuildCCIDec.AutoSize = True
         Me.rbBuildCCIDec.Location = New System.Drawing.Point(119, 40)
         Me.rbBuildCCIDec.Name = "rbBuildCCIDec"
         Me.rbBuildCCIDec.Size = New System.Drawing.Size(322, 17)
         Me.rbBuildCCIDec.TabIndex = 1
         Me.rbBuildCCIDec.Text = "Decrypted CCI (for Citra or Sky 3DS/Gateway+CFW+Decrypt9)"
-        Me.rbBuildCCIDec.UseVisualStyleBackColor = true
+        Me.rbBuildCCIDec.UseVisualStyleBackColor = True
         '
         'Label4
         '
-        Me.Label4.AutoSize = true
+        Me.Label4.AutoSize = True
         Me.Label4.Location = New System.Drawing.Point(6, 19)
         Me.Label4.Name = "Label4"
         Me.Label4.Size = New System.Drawing.Size(105, 13)
@@ -116,30 +118,30 @@ Partial Class ThreeDSFormatSelector
         '
         'rbBuildAuto
         '
-        Me.rbBuildAuto.AutoSize = true
-        Me.rbBuildAuto.Checked = true
+        Me.rbBuildAuto.AutoSize = True
+        Me.rbBuildAuto.Checked = True
         Me.rbBuildAuto.Location = New System.Drawing.Point(119, 17)
         Me.rbBuildAuto.Name = "rbBuildAuto"
         Me.rbBuildAuto.Size = New System.Drawing.Size(81, 17)
         Me.rbBuildAuto.TabIndex = 0
-        Me.rbBuildAuto.TabStop = true
+        Me.rbBuildAuto.TabStop = True
         Me.rbBuildAuto.Text = "Auto (ROM)"
-        Me.rbBuildAuto.UseVisualStyleBackColor = true
+        Me.rbBuildAuto.UseVisualStyleBackColor = True
         '
         'btnBuildOutputBrowse
         '
-        Me.btnBuildOutputBrowse.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.btnBuildOutputBrowse.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.btnBuildOutputBrowse.Location = New System.Drawing.Point(384, 4)
         Me.btnBuildOutputBrowse.Name = "btnBuildOutputBrowse"
         Me.btnBuildOutputBrowse.Size = New System.Drawing.Size(75, 23)
         Me.btnBuildOutputBrowse.TabIndex = 1
         Me.btnBuildOutputBrowse.Text = "Browse..."
-        Me.btnBuildOutputBrowse.UseVisualStyleBackColor = true
+        Me.btnBuildOutputBrowse.UseVisualStyleBackColor = True
         '
         'txtBuildDestination
         '
-        Me.txtBuildDestination.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left)  _
-            Or System.Windows.Forms.AnchorStyles.Right),System.Windows.Forms.AnchorStyles)
+        Me.txtBuildDestination.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.txtBuildDestination.Location = New System.Drawing.Point(85, 6)
         Me.txtBuildDestination.Name = "txtBuildDestination"
         Me.txtBuildDestination.Size = New System.Drawing.Size(293, 20)
@@ -147,18 +149,29 @@ Partial Class ThreeDSFormatSelector
         '
         'Label5
         '
-        Me.Label5.AutoSize = true
+        Me.Label5.AutoSize = True
         Me.Label5.Location = New System.Drawing.Point(12, 9)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(67, 13)
         Me.Label5.TabIndex = 16
         Me.Label5.Text = "Output Path:"
         '
+        'rbLuma
+        '
+        Me.rbLuma.AutoSize = True
+        Me.rbLuma.Location = New System.Drawing.Point(119, 132)
+        Me.rbLuma.Name = "rbLuma"
+        Me.rbLuma.Size = New System.Drawing.Size(132, 17)
+        Me.rbLuma.TabIndex = 5
+        Me.rbLuma.TabStop = True
+        Me.rbLuma.Text = "Luma 3DS Layered FS"
+        Me.rbLuma.UseVisualStyleBackColor = True
+        '
         'ThreeDSFormatSelector
         '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(6!, 13!)
+        Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(471, 208)
+        Me.ClientSize = New System.Drawing.Size(471, 234)
         Me.Controls.Add(Me.btnBuild)
         Me.Controls.Add(Me.GroupBox2)
         Me.Controls.Add(Me.btnBuildOutputBrowse)
@@ -184,4 +197,5 @@ End Sub
     Friend WithEvents btnBuildOutputBrowse As Button
     Friend WithEvents txtBuildDestination As TextBox
     Friend WithEvents Label5 As Label
+    Friend WithEvents rbLuma As RadioButton
 End Class

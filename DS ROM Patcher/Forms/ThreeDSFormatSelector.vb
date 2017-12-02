@@ -1,7 +1,5 @@
 ﻿Public Class ThreeDSFormatSelector
 
-
-
     Public ReadOnly Property SelectedFormat As DSFormat
         Get
             If rbBuildAuto.Checked Then
@@ -14,6 +12,8 @@
                 Return DSFormat.DecCIA
             ElseIf rbBuildHANS.Checked Then
                 Return DSFormat.HANS
+            ElseIf rbLuma.Checked Then
+                Return DSFormat.Luma
             Else
                 'Invalid radio button selection
                 'Should be unreachable
@@ -29,7 +29,7 @@
     End Property
 
     Private Sub btnBuildOutputBrowse_Click(sender As Object, e As EventArgs) Handles btnBuildOutputBrowse.Click
-        If rbBuildHANS.Checked Then
+        If rbBuildHANS.Checked OrElse rbLuma.Checked Then
             Dim f As New FolderBrowserDialog
             If f.ShowDialog = DialogResult.OK Then
                 txtBuildDestination.Text = f.SelectedPath
