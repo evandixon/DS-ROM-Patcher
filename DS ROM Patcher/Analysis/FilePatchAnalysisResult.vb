@@ -3,6 +3,7 @@
 
         Public Sub New()
             Patches = New Dictionary(Of String, FilePatcher)
+            MissingPatchers = New List(Of String)
         End Sub
 
         ''' <summary>
