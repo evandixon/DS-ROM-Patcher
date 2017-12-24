@@ -6,4 +6,5 @@
     Key0CCI
     DecCIA
     HANS
+    Luma
 End Enum

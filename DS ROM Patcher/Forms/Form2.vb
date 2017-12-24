@@ -35,7 +35,7 @@ Public Class Form2
     Dim _isLoading As Boolean
 
     'Filenames
-    Dim tempDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "DS-ROM-Patcher-" & Guid.NewGuid.ToString)
+    Dim tempDirectory = Path.Combine(Path.GetTempPath, "DS-ROM-Patcher-" & Guid.NewGuid.ToString)
     Dim currentDirectory = Environment.CurrentDirectory
     Dim modTempDirectory = Path.Combine(tempDirectory, "modstemp")
     Dim unpackTempDirectory = Path.Combine(tempDirectory, "dstemp")

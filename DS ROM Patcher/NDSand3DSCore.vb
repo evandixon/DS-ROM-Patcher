@@ -53,7 +53,7 @@ Public Class NDSand3DSCore
             'Apply the Mods
             Const RepackMessage As String = "Applying the mods..."
             RaiseProgressChanged(1 / 3, RepackMessage)
-            Await ModFile.ApplyPatches(mods, patchers, modpackDirectory, tempDirectory, ROMDirectory)
+            Dim filesModified = Await ModFile.ApplyPatches(mods, patchers, modpackDirectory, tempDirectory, ROMDirectory)
 
             'Repack the ROM
             If isDirectoryMode Then
@@ -69,6 +69,8 @@ Public Class NDSand3DSCore
                     outputFormat = DSFormat.DecCIA
                 ElseIf args.Contains("-output-hans") Then
                     outputFormat = DSFormat.HANS
+                ElseIf args.Contains("-output-luma") Then
+                    outputFormat = DSFormat.Luma
                 Else
                     Throw New ApplicationException(My.Resources.Language.ErrorUnknownInputType)
                 End If
@@ -107,6 +109,27 @@ ShowFormatDialog: Dim formatDialog As New ThreeDSFormatSelector
 
             '- Build
             Select Case outputFormat
+                Case DSFormat.Luma
+                    Dim titleId = Await DotNet3dsToolkit.MetadataReader.GetGameID(SelectedFilename)
+                    Dim baseTargetPath = Path.Combine(destinationPath, "luma", "titles", titleId)
+                    For Each file In filesModified
+                        Dim sourceFile = Path.Combine(ROMDirectory, file)
+                        Dim destFile = Path.Combine(destinationPath, baseTargetPath, file)
+
+                        'Create directory if it doesn't exist
+                        Dim destDir = Path.GetDirectoryName(destFile)
+                        If Not Directory.Exists(destDir) Then
+                            Directory.CreateDirectory(destDir)
+                        End If
+
+                        IO.File.Copy(sourceFile, destFile)
+                    Next
+
+                    'Move code.bin
+                    Dim codeBinExefs = Path.Combine(destinationPath, baseTargetPath, "exefs", "code.bin")
+                    If File.Exists(codeBinExefs) Then
+                        File.Move(codeBinExefs, Path.Combine(destinationPath, baseTargetPath, "code.bin"))
+                    End If
                 Case DSFormat.HANS
                     Await c.BuildHans(ROMDirectory, destinationPath, modpack.ShortName)
                 Case DSFormat.Auto, DSFormat.Auto3DS

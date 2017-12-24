@@ -104,7 +104,16 @@ Public Class ModFile
         Return modResult
     End Function
 
-    Public Async Function ApplyPatch(currentDirectory As String, tempDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
+    ''' <summary>
+    ''' Applies a patch
+    ''' </summary>
+    ''' <param name="currentDirectory"></param>
+    ''' <param name="tempDirectory"></param>
+    ''' <param name="ROMDirectory"></param>
+    ''' <param name="patchers"></param>
+    ''' <returns>A list of file paths that are modified</returns>
+    Public Async Function ApplyPatch(currentDirectory As String, tempDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task(Of List(Of String))
+        Dim filesModified As New List(Of String)
         Dim analysis = AnalyzeMod(currentDirectory, ROMDirectory, patchers)
         Using xdelta As New xdelta
             Dim renameTemp = IO.Path.Combine(currentDirectory, "Tools", "renametemp")
@@ -117,6 +126,7 @@ Public Class ModFile
             If ModDetails.ToUpdate IsNot Nothing Then
                 For Each fileAnalysis In analysis.Files
                     Dim sourceFile = fileAnalysis.SourceFile
+                    filesModified.Add(sourceFile)
                     For Each patch In fileAnalysis.Patches
                         Dim patchFile = Path.Combine(FilesPath, patch.Key)
                         Dim patcher = patch.Value
@@ -155,7 +165,9 @@ Public Class ModFile
 
                 'Rename the things
                 For Each file In ModDetails.ToRename
-                    CopyFile(IO.Path.Combine(renameTemp, file.Key.Trim("\")), IO.Path.Combine(ROMDirectory, file.Value.Trim("\")), True)
+                    Dim dest = Path.Combine(ROMDirectory, file.Value.Trim("\"))
+                    filesModified.Add(dest)
+                    CopyFile(Path.Combine(renameTemp, file.Key.Trim("\")), dest, True)
                 Next
             End If
 
@@ -171,30 +183,49 @@ Public Class ModFile
 
             Patched = True
         End Using
+        Return filesModified
     End Function
-    Public Shared Async Function ApplyPatch(Mods As List(Of ModFile), ModFile As ModFile, currentDirectory As String, tempDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task
+
+    ''' <summary>
+    ''' Applies a patch
+    ''' </summary>
+    ''' <param name="Mods">All of the available mods to be applied</param>
+    ''' <param name="ModFile">The mod to apply</param>
+    ''' <param name="currentDirectory"></param>
+    ''' <param name="tempDirectory"></param>
+    ''' <param name="ROMDirectory"></param>
+    ''' <param name="patchers"></param>
+    ''' <returns>A list of file paths that were modified</returns>
+    Public Shared Async Function ApplyPatch(Mods As List(Of ModFile), ModFile As ModFile, currentDirectory As String, tempDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task(Of List(Of String))
         If Not ModFile.Patched Then
+            Dim filesModified As New List(Of String)
+
             'Patch depencencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
                 For Each item In ModFile.ModDetails.DependenciesBefore
                     Dim q = From m In Mods Where m.ID = item AndAlso Not String.IsNullOrEmpty(m.ID)
 
                     For Each d In q
-                        Await ApplyPatch(Mods, d, currentDirectory, tempDirectory, ROMDirectory, patchers)
+                        filesModified.AddRange(Await ApplyPatch(Mods, d, currentDirectory, tempDirectory, ROMDirectory, patchers))
                     Next
                 Next
             End If
-            Await ModFile.ApplyPatch(currentDirectory, tempDirectory, ROMDirectory, patchers)
+
+            filesModified.AddRange(Await ModFile.ApplyPatch(currentDirectory, tempDirectory, ROMDirectory, patchers))
+
             'Patch dependencies
             If ModFile.ModDetails.DependenciesBefore IsNot Nothing Then
                 For Each item In ModFile.ModDetails.DependenciesAfter
                     Dim q = From m In Mods Where m.ID = item AndAlso Not String.IsNullOrEmpty(m.ID)
 
                     For Each d In q
-                        Await ApplyPatch(Mods, d, currentDirectory, tempDirectory, ROMDirectory, patchers)
+                        filesModified.AddRange(Await ApplyPatch(Mods, d, currentDirectory, tempDirectory, ROMDirectory, patchers))
                     Next
                 Next
             End If
+            Return filesModified
+        Else
+            Return New List(Of String)
         End If
     End Function
 
@@ -205,10 +236,13 @@ Public Class ModFile
     ''' <param name="patchers">The modpack-level patchers used to apply patches.</param>
     ''' <param name="modpackDirectory">The directory of the modpack.  This is <see cref="Environment.CurrentDirectory"/> if called from the DS-ROM-Patcher.</param>
     ''' <param name="romDirectory">The unpacked ROM.</param>
-    Public Shared Async Function ApplyPatches(mods As List(Of ModFile), patchers As List(Of FilePatcher), modpackDirectory As String, tempDirectory As String, romDirectory As String) As Task
+    ''' <returns>A list of relative file paths that were modified</returns>
+    Public Shared Async Function ApplyPatches(mods As List(Of ModFile), patchers As List(Of FilePatcher), modpackDirectory As String, tempDirectory As String, romDirectory As String) As Task(Of List(Of String))
+        Dim filesModified As New List(Of String)
         For Each item In mods
-            Await ModFile.ApplyPatch(mods, item, modpackDirectory, tempDirectory, romDirectory, patchers)
+            filesModified.AddRange(Await ModFile.ApplyPatch(mods, item, modpackDirectory, tempDirectory, romDirectory, patchers))
         Next
+        Return filesModified.Distinct().ToList()
     End Function
 
     Public Shared Sub CopyFile(OriginalFilename As String, NewFilename As String, Overwrite As Boolean)
