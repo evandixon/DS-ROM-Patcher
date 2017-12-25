@@ -118,9 +118,11 @@ ShowFormatDialog: Dim formatDialog As New ThreeDSFormatSelector
 
                         'Create directory if it doesn't exist
                         Dim destDir = Path.GetDirectoryName(destFile)
-                        If Not Directory.Exists(destDir) Then
-                            Directory.CreateDirectory(destDir)
+
+                        If Directory.Exists(destDir) Then
+                            Directory.Delete(destDir, True)
                         End If
+                        Directory.CreateDirectory(destDir)
 
                         IO.File.Copy(sourceFile, destFile)
                     Next
