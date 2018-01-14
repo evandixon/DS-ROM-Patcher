@@ -2,7 +2,7 @@
 Normaly, distributing ROM hacks for NDS ROMs involves an XDelta patch applied to the entire ROM.  3DS hacks usually involves tedious ROM extraction and file replacement.  Patches applied to the ROM as a whole do not support multiple regions of games, and tedious ROM extraction and file replacement is a chore.  DS ROM Patcher aims to fix that.
 
 ## System requirements
-* .Net Framework 4.6
+* .Net Framework 4.6.2
 
 ## Planned Features:
 * Mod metadata editing
