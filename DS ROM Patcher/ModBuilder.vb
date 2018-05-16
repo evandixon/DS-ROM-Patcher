@@ -382,6 +382,9 @@ Public Class ModBuilder
     End Sub
 
     Public Shared Sub ZipModpack(modpackDirectory As String, zipFilename As String)
+        If IO.File.Exists(zipFilename) Then
+            IO.File.Delete(zipFilename)
+        End If
         ZipFile.CreateFromDirectory(modpackDirectory, zipFilename)
     End Sub
 

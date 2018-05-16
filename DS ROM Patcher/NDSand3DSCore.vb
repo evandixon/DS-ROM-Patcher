@@ -110,6 +110,11 @@ ShowFormatDialog: Dim formatDialog As New ThreeDSFormatSelector
             '- Build
             Select Case outputFormat
                 Case DSFormat.Luma
+                    If Directory.Exists(destinationPath) Then
+                        Directory.Delete(destinationPath, True)
+                    End If
+                    Directory.CreateDirectory(destinationPath)
+
                     Dim titleId = Await DotNet3dsToolkit.MetadataReader.GetGameID(SelectedFilename)
                     Dim baseTargetPath = Path.Combine(destinationPath, "luma", "titles", titleId)
                     For Each file In filesModified
@@ -118,6 +123,7 @@ ShowFormatDialog: Dim formatDialog As New ThreeDSFormatSelector
 
                         'Create directory if it doesn't exist
                         Dim destDir = Path.GetDirectoryName(destFile)
+
                         If Not Directory.Exists(destDir) Then
                             Directory.CreateDirectory(destDir)
                         End If
