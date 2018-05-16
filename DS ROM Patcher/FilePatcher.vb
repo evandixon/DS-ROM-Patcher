@@ -72,6 +72,7 @@ Public Class FilePatcher
         tools.Add(SerializableInfo.CreatePatchProgram)
         tools.Add(SerializableInfo.ApplyPatchProgram)
         For Each item In tools.Distinct
+            'Copy the file
             Dim source As String = Path.Combine(ToolsDirectory, item)
             Dim dest As String = Path.Combine(newToolsDir, item)
 
@@ -80,6 +81,17 @@ Public Class FilePatcher
             End If
 
             File.Copy(source, dest, True)
+
+            'Copy the dependencies
+            For Each depSource In ReflectionHelpers.GetAssemblyDependencies(ReflectionHelpers.LoadAssemblyWithDependencies(item))
+                Dim depDest As String = depSource.Replace(ToolsDirectory, newToolsDir)
+
+                If Not Directory.Exists(Path.GetDirectoryName(depDest)) Then
+                    Directory.CreateDirectory(Path.GetDirectoryName(depDest))
+                End If
+
+                File.Copy(depSource, depDest, True)
+            Next
         Next
     End Sub
 End Class
