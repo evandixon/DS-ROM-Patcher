@@ -325,12 +325,10 @@ Public Class ModBuilder
 
                                'Use xdelta for all other file types
                                If Not patchMade Then
-                                   Using xdelta As New xdelta
-                                       Dim oldFile As String = Path.Combine(originalDirectory, itemTrimmed)
-                                       Dim newFile As String = Path.Combine(modifiedDirectory, itemTrimmed)
-                                       Dim deltaFile As String = Path.Combine(modTempFiles, itemTrimmed & ".ips")
-                                       ipsCreator.Create(oldFile, newFile, deltaFile)
-                                   End Using
+                                   Dim oldFile As String = Path.Combine(originalDirectory, itemTrimmed)
+                                   Dim newFile As String = Path.Combine(modifiedDirectory, itemTrimmed)
+                                   Dim deltaFile As String = Path.Combine(modTempFiles, itemTrimmed & ".ips")
+                                   ipsCreator.Create(oldFile, newFile, deltaFile)
                                End If
                            End Function)
 

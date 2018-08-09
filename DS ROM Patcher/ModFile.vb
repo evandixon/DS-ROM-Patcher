@@ -116,75 +116,73 @@ Public Class ModFile
     Public Async Function ApplyPatch(currentDirectory As String, tempDirectory As String, ROMDirectory As String, patchers As List(Of FilePatcher)) As Task(Of List(Of String))
         Dim filesModified As New List(Of String)
         Dim analysis = AnalyzeMod(currentDirectory, ROMDirectory, patchers)
-        Using xdelta As New xdelta
-            Dim renameTemp = IO.Path.Combine(currentDirectory, "Tools", "renametemp")
-            If ModDetails.ToAdd IsNot Nothing Then
-                For Each file In ModDetails.ToAdd
-                    IO.File.Copy(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Files", file.Trim("\")), Path.Combine(ROMDirectory, file.Trim("\")), True)
-                Next
-            End If
+        Dim renameTemp = IO.Path.Combine(currentDirectory, "Tools", "renametemp")
+        If ModDetails.ToAdd IsNot Nothing Then
+            For Each file In ModDetails.ToAdd
+                IO.File.Copy(IO.Path.Combine(IO.Path.GetDirectoryName(Filename), "Files", file.Trim("\")), Path.Combine(ROMDirectory, file.Trim("\")), True)
+            Next
+        End If
 
-            If ModDetails.ToUpdate IsNot Nothing Then
-                For Each fileAnalysis In analysis.Files
-                    Dim sourceFile = fileAnalysis.SourceFile
-                    filesModified.Add(sourceFile)
-                    For Each patch In fileAnalysis.Patches
-                        Dim patchFile = Path.Combine(FilesPath, patch.Key)
-                        Dim patcher = patch.Value
-                        Dim tempFilename As String = Path.Combine(tempDirectory, "tempFile")
+        If ModDetails.ToUpdate IsNot Nothing Then
+            For Each fileAnalysis In analysis.Files
+                Dim sourceFile = fileAnalysis.SourceFile
+                filesModified.Add(sourceFile)
+                For Each patch In fileAnalysis.Patches
+                    Dim patchFile = Path.Combine(FilesPath, patch.Key)
+                    Dim patcher = patch.Value
+                    Dim tempFilename As String = Path.Combine(tempDirectory, "tempFile")
 
-                        'Run the patcher
-                        If patcher Is Nothing Then
-                            'Patch with LibIPS
-                            Dim ipsPatcher As New Patcher
-                            ipsPatcher.Patch(patchFile, Path.Combine(ROMDirectory, sourceFile), tempFilename)
-                        Else
-                            'Patch with given patcher
-                            Await ProcessHelper.RunProgram(patcher.GetApplyPatchProgramPath, String.Format(patcher.SerializableInfo.ApplyPatchArguments, IO.Path.Combine(ROMDirectory, sourceFile), patchFile, tempFilename))
-                        End If
+                    'Run the patcher
+                    If patcher Is Nothing Then
+                        'Patch with LibIPS
+                        Dim ipsPatcher As New Patcher
+                        ipsPatcher.Patch(patchFile, Path.Combine(ROMDirectory, sourceFile), tempFilename)
+                    Else
+                        'Patch with given patcher
+                        Await ProcessHelper.RunProgram(patcher.GetApplyPatchProgramPath, String.Format(patcher.SerializableInfo.ApplyPatchArguments, IO.Path.Combine(ROMDirectory, sourceFile), patchFile, tempFilename))
+                    End If
 
-                        'Copy temp file to target location
-                        If Not IO.File.Exists(tempFilename) Then
-                            MessageBox.Show("Unable to patch file """ & sourceFile & """.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")
-                        Else
-                            File.Copy(tempFilename, IO.Path.Combine(ROMDirectory, sourceFile), True)
-                            File.Delete(tempFilename)
-                        End If
-                    Next
-                Next
-            End If
-
-            If ModDetails.ToRename IsNot Nothing Then
-                'Create temporary directory
-                If Not IO.Directory.Exists(renameTemp) Then
-                    IO.Directory.CreateDirectory(renameTemp)
-                End If
-
-                'Move to a temporary directory (so swapping files works)
-                For Each file In ModDetails.ToRename
-                    CopyFile(IO.Path.Combine(ROMDirectory, file.Key.Trim("\")), IO.Path.Combine(renameTemp, file.Key.Trim("\")), True)
-                Next
-
-                'Rename the things
-                For Each file In ModDetails.ToRename
-                    Dim dest = Path.Combine(ROMDirectory, file.Value.Trim("\"))
-                    filesModified.Add(dest)
-                    CopyFile(Path.Combine(renameTemp, file.Key.Trim("\")), dest, True)
-                Next
-            End If
-
-            If ModDetails.ToDelete IsNot Nothing Then
-                For Each file In ModDetails.ToDelete
-                    If IO.File.Exists(IO.Path.Combine(ROMDirectory, file.Trim("\"))) Then
-                        IO.File.Delete(IO.Path.Combine(ROMDirectory, file.Trim("\")))
+                    'Copy temp file to target location
+                    If Not IO.File.Exists(tempFilename) Then
+                        MessageBox.Show("Unable to patch file """ & sourceFile & """.  Please ensure you're using a supported ROM.  If you sure you are, report this to the mod author.")
+                    Else
+                        File.Copy(tempFilename, IO.Path.Combine(ROMDirectory, sourceFile), True)
+                        File.Delete(tempFilename)
                     End If
                 Next
+            Next
+        End If
+
+        If ModDetails.ToRename IsNot Nothing Then
+            'Create temporary directory
+            If Not IO.Directory.Exists(renameTemp) Then
+                IO.Directory.CreateDirectory(renameTemp)
             End If
 
-            If IO.Directory.Exists(renameTemp) Then IO.Directory.Delete(renameTemp, True)
+            'Move to a temporary directory (so swapping files works)
+            For Each file In ModDetails.ToRename
+                CopyFile(IO.Path.Combine(ROMDirectory, file.Key.Trim("\")), IO.Path.Combine(renameTemp, file.Key.Trim("\")), True)
+            Next
 
-            Patched = True
-        End Using
+            'Rename the things
+            For Each file In ModDetails.ToRename
+                Dim dest = Path.Combine(ROMDirectory, file.Value.Trim("\"))
+                filesModified.Add(dest)
+                CopyFile(Path.Combine(renameTemp, file.Key.Trim("\")), dest, True)
+            Next
+        End If
+
+        If ModDetails.ToDelete IsNot Nothing Then
+            For Each file In ModDetails.ToDelete
+                If IO.File.Exists(IO.Path.Combine(ROMDirectory, file.Trim("\"))) Then
+                    IO.File.Delete(IO.Path.Combine(ROMDirectory, file.Trim("\")))
+                End If
+            Next
+        End If
+
+        If IO.Directory.Exists(renameTemp) Then IO.Directory.Delete(renameTemp, True)
+
+        Patched = True
         Return filesModified
     End Function
 

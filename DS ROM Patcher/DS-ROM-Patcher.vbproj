@@ -196,7 +196,6 @@
     <Compile Include="PatcherCore.vb" />
     <Compile Include="DSFormat.vb" />
     <Compile Include="Utilities\ProcessHelper.vb" />
-    <Compile Include="Utilities\xdelta.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\CreateModWindow.resx">
@@ -242,13 +241,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Resources\xdelta3.exe" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LibIPS.NET\LibIPS.NET.csproj">
       <Project>{B997EAB5-FD05-4B98-9663-C9FE2D822150}</Project>
       <Name>LibIPS.NET</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
