@@ -2,6 +2,7 @@
 Imports System.IO.Compression
 Imports System.Security.Cryptography
 Imports System.Text.RegularExpressions
+Imports CodeIsle.LibIpsNet
 Imports DS_ROM_Patcher.Utilities
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
@@ -281,6 +282,8 @@ Public Class ModBuilder
             File.Copy(fileName, Path.Combine(modTempFiles, item.TrimStart("\")), True)
         Next
 
+        Dim ipsCreator As New Creator
+
         Dim f As New AsyncFor
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
         Dim onProgressChanged = Sub(sender As Object, e As ProgressReportedEventArgs)
@@ -325,8 +328,8 @@ Public Class ModBuilder
                                    Using xdelta As New xdelta
                                        Dim oldFile As String = Path.Combine(originalDirectory, itemTrimmed)
                                        Dim newFile As String = Path.Combine(modifiedDirectory, itemTrimmed)
-                                       Dim deltaFile As String = Path.Combine(modTempFiles, itemTrimmed & ".xdelta")
-                                       Await xdelta.CreatePatch(oldFile, newFile, deltaFile)
+                                       Dim deltaFile As String = Path.Combine(modTempFiles, itemTrimmed & ".ips")
+                                       ipsCreator.Create(oldFile, newFile, deltaFile)
                                    End Using
                                End If
                            End Function)

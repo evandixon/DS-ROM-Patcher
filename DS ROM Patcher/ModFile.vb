@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports CodeIsle.LibIpsNet
 Imports DS_ROM_Patcher.Analysis
 Imports DS_ROM_Patcher.Utilities
 Imports SkyEditor.Core.IO
@@ -134,8 +135,9 @@ Public Class ModFile
 
                         'Run the patcher
                         If patcher Is Nothing Then
-                            'Patch with XDelta
-                            Await xdelta.ApplyPatch(Path.Combine(ROMDirectory, sourceFile), patchFile, tempFilename)
+                            'Patch with LibIPS
+                            Dim ipsPatcher As New Patcher
+                            ipsPatcher.Patch(patchFile, Path.Combine(ROMDirectory, sourceFile), tempFilename)
                         Else
                             'Patch with given patcher
                             Await ProcessHelper.RunProgram(patcher.GetApplyPatchProgramPath, String.Format(patcher.SerializableInfo.ApplyPatchArguments, IO.Path.Combine(ROMDirectory, sourceFile), patchFile, tempFilename))
