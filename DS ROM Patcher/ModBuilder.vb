@@ -135,6 +135,9 @@ Public Class ModBuilder
     Public Async Function BuildMod(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IIOProvider) As Task
         IsBuildComplete = False
 
+        ResetVerboseLog()
+        WriteVerboseLog("Starting to build mod")
+
         Dim modTempFiles = Path.Combine(ModTempDir, "Files")
         Dim modTempTools = Path.Combine(ModTempDir, "Tools")
 
@@ -150,113 +153,126 @@ Public Class ModBuilder
         actions.UpdateUrl = Homepage
         actions.GameCode = GameCode
 
-        Await Task.Run(Async Function() As Task
-                           Me.BuildProgress = 0
-                           Me.BuildStatusMessage = My.Resources.Language.LoadingAnalzingFiles
-                           'Create the mod
-                           '-Find all the files
-                           Dim sourceFiles As New Dictionary(Of String, Byte())
-                           For Each file In Directory.GetFiles(originalDirectory, "*", SearchOption.AllDirectories)
-                               sourceFiles.Add(file.Replace(originalDirectory, "").ToLower, {})
-                           Next
+        Me.BuildProgress = 0
+        Me.BuildStatusMessage = My.Resources.Language.LoadingAnalzingFiles
+        'Create the mod
+        '-Find all the files
+        WriteVerboseLog("Finding the files")
+        Dim sourceFiles As New Dictionary(Of String, Byte())
+        For Each file In Directory.GetFiles(originalDirectory, "*", SearchOption.AllDirectories)
+            sourceFiles.Add(file.Replace(originalDirectory, "").ToLower, {})
+        Next
+        WriteVerboseLog($"Found '{sourceFiles.Count}' source files")
 
 
-                           Dim destFiles As New Dictionary(Of String, Byte())
-                           For Each file In Directory.GetFiles(modifiedDirectory, "*", SearchOption.AllDirectories)
-                               Dim part = file.Replace(modifiedDirectory, "").ToLower
-                               If Not file.ToLower.EndsWith(".skyproj") AndAlso Not part.StartsWith("\output") AndAlso Not part.StartsWith("\mod files") Then 'In case the raw files are stored in the project root
-                                   destFiles.Add(part, {})
-                               End If
-                           Next
+        Dim destFiles As New Dictionary(Of String, Byte())
+        For Each file In Directory.GetFiles(modifiedDirectory, "*", SearchOption.AllDirectories)
+            Dim part = file.Replace(modifiedDirectory, "").ToLower
+            If Not file.ToLower.EndsWith(".skyproj") AndAlso Not part.StartsWith("\output") AndAlso Not part.StartsWith("\mod files") Then 'In case the raw files are stored in the project root
+                destFiles.Add(part, {})
+            End If
+        Next
+        WriteVerboseLog($"Found '{destFiles.Count}' destination files")
 
-                           '-Analyze files
-                           '(Only calculate hashes for files that exist on both sides, to save on time)
-                           'Todo: figure out a faster way of doing this; it's absurdly slow for large numbers of files
-                           Dim hashToCalcSource As New List(Of String)
-                           Dim hashToCalcDest As New List(Of String)
-                           For i = 0 To destFiles.Keys.Count - 1
-                               Dim destFile = destFiles.Keys(i)
-                               If sourceFiles.Keys.Contains(destFiles.Keys(i)) Then
-                                   hashToCalcSource.Add(destFile)
-                                   hashToCalcDest.Add(destFile)
-                                   Me.BuildProgress = ((i) / (destFiles.Keys.Count))
-                               End If
-                           Next
+        '-Analyze files
+        '(Only calculate hashes for files that exist on both sides, to save on time)
+        'Todo: figure out a faster way of doing this; it's absurdly slow for large numbers of files
+        WriteVerboseLog("Finding files in need of hashes")
+        Dim hashToCalcSource As New List(Of String)
+        Dim hashToCalcDest As New List(Of String)
+        For i = 0 To destFiles.Keys.Count - 1
+            Dim destFile = destFiles.Keys(i)
+            If sourceFiles.Keys.Contains(destFiles.Keys(i)) Then
+                hashToCalcSource.Add(destFile)
+                hashToCalcDest.Add(destFile)
+                Me.BuildProgress = ((i) / (destFiles.Keys.Count))
+            End If
+        Next
+        WriteVerboseLog($"Found {hashToCalcSource.Count} source files needing hashes")
 
-                           Me.BuildProgress = 0
-                           Me.BuildStatusMessage = My.Resources.Language.LoadingComputingHashes
+        Me.BuildProgress = 0
+        Me.BuildStatusMessage = My.Resources.Language.LoadingComputingHashes
 
-                           Dim tasks As New List(Of Task)
-                           Dim completed As Integer = 0
-                           '-Compute the hashes
-                           For count = 0 To hashToCalcSource.Count - 1
-                               Dim c = count
-                               tasks.Add(Task.Run(New Action(Sub()
-                                                                 Using h = MD5.Create
-                                                                     Me.BuildProgress = completed / (hashToCalcSource.Count + hashToCalcDest.Count)
-                                                                     Using source = File.OpenRead(Path.Combine(originalDirectory, hashToCalcSource(c).TrimStart("\")))
-                                                                         sourceFiles(hashToCalcSource(c)) = h.ComputeHash(source)
-                                                                     End Using
-                                                                     completed += 1
-                                                                 End Using
-                                                             End Sub)))
-                           Next
+        Dim tasks As New List(Of Task)
+        Dim completed As Integer = 0
+        WriteVerboseLog("Computing hashes")
+        '-Compute the hashes
+        For count = 0 To hashToCalcSource.Count - 1
+            Dim c = count
+            tasks.Add(Task.Run(New Action(Sub()
+                                              Using h = MD5.Create
+                                                  WriteVerboseLog($"Computing hash for file '{hashToCalcSource(c)}' (source file)")
+                                                  Me.BuildProgress = completed / (hashToCalcSource.Count + hashToCalcDest.Count)
+                                                  Using source = File.OpenRead(Path.Combine(originalDirectory, hashToCalcSource(c).TrimStart("\")))
+                                                      sourceFiles(hashToCalcSource(c)) = h.ComputeHash(source)
+                                                  End Using
+                                                  completed += 1
+                                                  WriteVerboseLog($"Finished computing has for '{hashToCalcSource(c)}' (source)")
+                                              End Using
+                                          End Sub)))
+        Next
 
-                           For count = 0 To hashToCalcDest.Count - 1
-                               Dim c = count
-                               tasks.Add(Task.Run(New Action(Sub()
-                                                                 Using h = MD5.Create
-                                                                     Me.BuildProgress = completed / (hashToCalcSource.Count + hashToCalcDest.Count)
-                                                                     Using dest = File.OpenRead(Path.Combine(modifiedDirectory, hashToCalcDest(c).TrimStart("\")))
-                                                                         destFiles(hashToCalcDest(c)) = h.ComputeHash(dest)
-                                                                     End Using
-                                                                     completed += 1
-                                                                 End Using
-                                                             End Sub)))
-                           Next
+        For count = 0 To hashToCalcDest.Count - 1
+            Dim c = count
+            tasks.Add(Task.Run(New Action(Sub()
+                                              Using h = MD5.Create
+                                                  WriteVerboseLog($"Computing hash for file '{hashToCalcSource(c)}' (dest file)")
+                                                  Me.BuildProgress = completed / (hashToCalcSource.Count + hashToCalcDest.Count)
+                                                  Using dest = File.OpenRead(Path.Combine(modifiedDirectory, hashToCalcDest(c).TrimStart("\")))
+                                                      destFiles(hashToCalcDest(c)) = h.ComputeHash(dest)
+                                                  End Using
+                                                  completed += 1
+                                                  WriteVerboseLog($"Finished computing has for '{hashToCalcSource(c)}' (dest)")
+                                              End Using
+                                          End Sub)))
+        Next
 
-                           Await Task.WhenAll(tasks)
+        Await Task.WhenAll(tasks)
+        WriteVerboseLog("Hash computation complete")
 
-                           Me.BuildProgress = 0
-                           Me.BuildStatusMessage = My.Resources.Language.LoadingComparingFiles
-                           '-Analyze the differences
-                           For Each item In destFiles.Keys
-                               Dim originalFilename As String = ""
-                               Dim existsSource As Boolean = sourceFiles.ContainsKey(item)
-                               If existsSource Then
-                                   'Possible actions: rename, update, none
-                                   If sourceFiles(item).SequenceEqual(destFiles(item)) Then
-                                       'Do Nothing
-                                   Else
-                                       'Possible actions: update, rename
-                                       If DictionaryContainsValue(sourceFiles, destFiles(item)) Then
-                                           actions.ToRename.Add(item, (From s In sourceFiles Where s.Value.SequenceEqual(destFiles(item)) Take 1 Select s.Key).ToList(0))
-                                       Else
-                                           actions.ToUpdate.Add(item)
-                                       End If
-                                   End If
-                               Else
-                                   'Possible actions: add, rename
-                                   If DictionaryContainsValue(sourceFiles, destFiles(item)) Then
-                                       actions.ToRename.Add(item, (From d In sourceFiles Where d.Value.SequenceEqual(destFiles(item)) Take 1 Select d.Key).ToList(0))
-                                   Else
-                                       If Me.SupportsAdd Then
-                                           actions.ToAdd.Add(item)
-                                       End If
-                                   End If
-                               End If
-                           Next
+        Me.BuildProgress = 0
+        Me.BuildStatusMessage = My.Resources.Language.LoadingComparingFiles
+        '-Analyze the differences
+        WriteVerboseLog("Comparing file hashes")
+        For Each item In destFiles.Keys
+            Dim originalFilename As String = ""
+            Dim existsSource As Boolean = sourceFiles.ContainsKey(item)
+            If existsSource Then
+                'Possible actions: rename, update, none
+                If sourceFiles(item).SequenceEqual(destFiles(item)) Then
+                    'Do Nothing
+                Else
+                    'Possible actions: update, rename
+                    If DictionaryContainsValue(sourceFiles, destFiles(item)) Then
+                        actions.ToRename.Add(item, (From s In sourceFiles Where s.Value.SequenceEqual(destFiles(item)) Take 1 Select s.Key).ToList(0))
+                    Else
+                        actions.ToUpdate.Add(item)
+                    End If
+                End If
+            Else
+                'Possible actions: add, rename
+                If DictionaryContainsValue(sourceFiles, destFiles(item)) Then
+                    actions.ToRename.Add(item, (From d In sourceFiles Where d.Value.SequenceEqual(destFiles(item)) Take 1 Select d.Key).ToList(0))
+                Else
+                    If Me.SupportsAdd Then
+                        actions.ToAdd.Add(item)
+                    End If
+                End If
+            End If
+        Next
+        WriteVerboseLog("File hash comparison complete")
 
-                           If Me.SupportsDelete Then
-                               For Each item In sourceFiles.Keys
-                                   Dim existsDest As Boolean = destFiles.ContainsKey(item)
-                                   If Not existsDest Then
-                                       'Possible actions: delete (rename would have been detected in above iteration)
-                                       actions.ToDelete.Add(item)
-                                   End If
-                               Next
-                           End If
-                       End Function)
+        If Me.SupportsDelete Then
+            WriteVerboseLog("Checking for file deletes")
+            For Each item In sourceFiles.Keys
+                Dim existsDest As Boolean = destFiles.ContainsKey(item)
+                If Not existsDest Then
+                    'Possible actions: delete (rename would have been detected in above iteration)
+                    actions.ToDelete.Add(item)
+                End If
+            Next
+            WriteVerboseLog("File delete checking complete")
+        End If
 
         '-Copy and write files
         Await FileSystem.EnsureDirectoryExistsEmpty(ModTempDir, provider)
@@ -267,6 +283,7 @@ Public Class ModBuilder
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
 
         '-- Add files that were added
+        WriteVerboseLog("Processing files to add")
         For Each item In actions.ToAdd
             Dim itemTrimmed = item.Trim("\")
             Dim fileName = IO.Path.Combine(modifiedDirectory, itemTrimmed)
@@ -280,6 +297,7 @@ Public Class ModBuilder
             'Copy the file
             File.Copy(fileName, Path.Combine(modTempFiles, item.TrimStart("\")), True)
         Next
+        WriteVerboseLog("File add processing complete")
 
         Dim f As New AsyncFor
         Me.BuildStatusMessage = My.Resources.Language.LoadingGeneratingPatch
@@ -287,9 +305,11 @@ Public Class ModBuilder
                                     BuildProgress = e.Progress
                                 End Sub
         AddHandler f.ProgressChanged, onProgressChanged
-
+        f.BatchSize = Environment.ProcessorCount * 2
+        WriteVerboseLog($"Starting to create file patches using '{Environment.ProcessorCount * 2}' threads")
         Await f.RunForEach(actions.ToUpdate,
                            Async Function(Item As String) As Task
+                               WriteVerboseLog($"Creating patch for file {Item}")
                                Dim itemTrimmed = Item.Trim("\")
                                Dim patchMade As Boolean = False
 
@@ -314,7 +334,7 @@ Public Class ModBuilder
                                        Dim newF As String = Path.Combine(modifiedDirectory, itemTrimmed)
                                        Dim patchFile As String = Path.Combine(modTempFiles, itemTrimmed & "." & patcher.SerializableInfo.PatchExtension.Trim("*").Trim("."))
 
-                                       Await ProcessHelper.RunProgram(patcher.GetCreatePatchProgramPath, String.Format(patcher.SerializableInfo.CreatePatchArguments, oldF, newF, patchFile)).ConfigureAwait(False)
+                                       Await ProcessHelper.RunProgram(patcher.GetCreatePatchProgramPath, String.Format(patcher.SerializableInfo.CreatePatchArguments, oldF, newF, patchFile))
                                        patchMade = True
                                        Exit For 'Stop looking for patchers, we've found one
                                    End If
@@ -329,10 +349,13 @@ Public Class ModBuilder
                                        Await xdelta.CreatePatch(oldFile, newFile, deltaFile)
                                    End Using
                                End If
+
+                               WriteVerboseLog($"Finished creating patch for {Item}")
                            End Function)
 
         '-Copy Patcher programs for non-standard file formats (xdelta will be copied with the modpack)
         '-- Create the tools directory if it doesn't exist
+        WriteVerboseLog("Copying patcher programs")
         If Not Directory.Exists(modTempTools) Then
             Directory.CreateDirectory(modTempTools)
         End If
@@ -344,21 +367,28 @@ Public Class ModBuilder
         Next
         '- Serialize the list of patchers
         FilePatcher.SerializePatherListToFile(patchers, Path.Combine(modTempTools, "patchers.json"), provider)
+        WriteVerboseLog("Finished copying patcher programs")
 
         '- Zip Mod
+        WriteVerboseLog("Zipping mod")
         If File.Exists(outputModFilename) Then
             File.Delete(outputModFilename)
         End If
         ZipFile.CreateFromDirectory(ModTempDir, outputModFilename)
+        WriteVerboseLog("Finished zipping mod")
 
         '- Cleanup
+        WriteVerboseLog("Cleaning up")
         Directory.Delete(ModTempDir, True)
+        WriteVerboseLog("Finished cleaning up")
         _modTempDir = Nothing
 
         'Report completion
         BuildProgress = 1
         BuildStatusMessage = My.Resources.Language.Complete
         IsBuildComplete = True
+
+        WriteVerboseLog("Building mod complete")
     End Function
 
     ''' <summary>
@@ -400,5 +430,17 @@ Public Class ModBuilder
     Public Shared Sub SaveModpackInfo(modpackDirectory As String, info As ModpackInfo)
         Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
         Json.SerializeToFile(modpackInfoFilename, info, New PhysicalIOProvider)
+    End Sub
+
+    Private Shared VerboseLogLock As New Object
+    Private Shared Sub ResetVerboseLog()
+        SyncLock VerboseLogLock
+            File.WriteAllText("modbuilder.log", "")
+        End SyncLock
+    End Sub
+    Private Shared Sub WriteVerboseLog(message As String)
+        SyncLock VerboseLogLock
+            File.AppendAllText("modbuilder.log", $"[Thread {Threading.Thread.CurrentThread.ManagedThreadId}, {DateTime.Now.ToString()}] {message}" & Environment.NewLine)
+        End SyncLock
     End Sub
 End Class

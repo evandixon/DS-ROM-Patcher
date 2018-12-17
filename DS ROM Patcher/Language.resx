@@ -126,6 +126,12 @@
   <data name="ErrorUnknownInputType" xml:space="preserve">
     <value>Unable to detect the source ROM type.  Please use one of the following command-line arguments when using a directory as the source: -output-nds, -output-3ds, -output-cia, or -output-hans</value>
   </data>
+  <data name="Forms_CreateMod_AlreadyBuilding" xml:space="preserve">
+    <value>The mod is already building. Please wait for it to complete before continuing.</value>
+  </data>
+  <data name="Forms_CreateMod_Finished" xml:space="preserve">
+    <value>The mod has finished building. Please use Modpack -&gt; Export to export your mods into a distributable format, or create another mod.</value>
+  </data>
   <data name="LoadingAnalzingFiles" xml:space="preserve">
     <value>Analyzing files...</value>
   </data>

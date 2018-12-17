@@ -24,6 +24,8 @@ Public Class CreateModWindow
 
     Private _modpackDirectory As String
 
+    Private _currentBuildTask As Task
+
     Private Property IsBuilding As Boolean
         Get
             Return _isBuilding
@@ -70,10 +72,28 @@ Public Class CreateModWindow
         DialogResult = DialogResult.Cancel
     End Sub
 
-    Private Async Sub btnCreate_Click(sender As Object, e As EventArgs) Handles btnCreate.Click
-        Await Build(_modpackDirectory)
-        Close()
-        DialogResult = DialogResult.OK
+    Private Sub btnCreate_Click(sender As Object, e As EventArgs) Handles btnCreate.Click
+        If _currentBuildTask Is Nothing Then
+            btnCancel.Enabled = False
+            btnCreate.Enabled = False
+            _currentBuildTask = Task.Run(Async Function() As Task
+                                             Try
+                                                 Await Build(_modpackDirectory)
+                                                 Invoke(Sub()
+                                                            MessageBox.Show(My.Resources.Language.Forms_CreateMod_Finished)
+                                                            btnCancel.Enabled = True
+                                                            btnCreate.Enabled = True
+                                                            Close()
+                                                            DialogResult = DialogResult.OK
+                                                        End Sub)
+                                             Catch ex As Exception
+                                                 MessageBox.Show("Encountered an exception building the mod. Please see 'createModError.txt' for details.")
+                                                 File.WriteAllText("createModError.txt", ex.ToString())
+                                             End Try
+                                         End Function)
+        Else
+            MessageBox.Show(My.Resources.Language.Forms_CreateMod_AlreadyBuilding)
+        End If
     End Sub
 
     Private Async Function Build(modpackDirectory As String) As Task

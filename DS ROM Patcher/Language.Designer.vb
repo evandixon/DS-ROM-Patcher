@@ -22,7 +22,7 @@ Namespace My.Resources
     '''<summary>
     '''  A strongly-typed resource class, for looking up localized strings, etc.
     '''</summary>
-    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0"),  _
+    <Global.System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0"),  _
      Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
      Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute()>  _
     Friend Class Language
@@ -88,6 +88,24 @@ Namespace My.Resources
         Friend Shared ReadOnly Property ErrorUnknownInputType() As String
             Get
                 Return ResourceManager.GetString("ErrorUnknownInputType", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to The mod is already building. Please wait for it to complete before continuing..
+        '''</summary>
+        Friend Shared ReadOnly Property Forms_CreateMod_AlreadyBuilding() As String
+            Get
+                Return ResourceManager.GetString("Forms_CreateMod_AlreadyBuilding", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized string similar to The mod has finished building. Please use Modpack -&gt; Export to export your mods into a distributable format, or create another mod..
+        '''</summary>
+        Friend Shared ReadOnly Property Forms_CreateMod_Finished() As String
+            Get
+                Return ResourceManager.GetString("Forms_CreateMod_Finished", resourceCulture)
             End Get
         End Property
         
