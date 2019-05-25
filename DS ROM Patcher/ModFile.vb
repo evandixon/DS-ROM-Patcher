@@ -3,10 +3,11 @@ Imports DS_ROM_Patcher.Analysis
 Imports DS_ROM_Patcher.Utilities
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.IO.FileSystem
 
 Public Class ModFile
     Public Sub New(Filename As String)
-        Dim provider As New PhysicalIOProvider
+        Dim provider As New PhysicalFileSystem
         Me.ModDetails = Json.DeserializeFromFile(Of ModJson)(Filename, provider)
         Me.ID = Me.ModDetails.ID
         Me.Name = Me.ModDetails.Name

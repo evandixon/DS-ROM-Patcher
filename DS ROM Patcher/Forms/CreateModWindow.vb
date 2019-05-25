@@ -1,6 +1,8 @@
 ﻿Imports System.IO
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.IO.FileSystem
+Imports SkyEditor.Utilities.AsyncFor
 
 Public Class CreateModWindow
     Public Sub New(patchers As List(Of FilePatcher), modpackDirectory As String)
@@ -95,7 +97,7 @@ Public Class CreateModWindow
         Dim destination As String = Path.Combine(modpackDirectory, "Mods", txtModName.Text & " v" & txtModVersion.Text & ".mod")
 
         AddHandler builder.BuildStatusChanged, AddressOf OnProgressChanged
-        Await builder.BuildMod(txtOriginal.Text, txtModified.Text, destination, New PhysicalIOProvider)
+        Await builder.BuildMod(txtOriginal.Text, txtModified.Text, destination, New PhysicalFileSystem)
         RemoveHandler builder.BuildStatusChanged, AddressOf OnProgressChanged
 
         CreatedModFilename = destination

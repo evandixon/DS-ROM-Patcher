@@ -2,6 +2,7 @@
 Imports System.IO.Compression
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.IO.FileSystem
 
 Public Class FilePatcher
 
@@ -9,14 +10,14 @@ Public Class FilePatcher
     Public Shared Function DeserializePatcherList(patchersJsonFilename As String, toolsDirectory As String) As List(Of FilePatcher)
         Dim out As New List(Of FilePatcher)
         If File.Exists(patchersJsonFilename) Then
-            For Each item In Json.DeserializeFromFile(Of List(Of FilePatcherJson))(patchersJsonFilename, New PhysicalIOProvider)
+            For Each item In Json.DeserializeFromFile(Of List(Of FilePatcherJson))(patchersJsonFilename, New PhysicalFileSystem)
                 out.Add(New FilePatcher(item, toolsDirectory))
             Next
         End If
         Return out
     End Function
 
-    Public Shared Sub SerializePatherListToFile(patchers As List(Of FilePatcher), filename As String, provider As IIOProvider)
+    Public Shared Sub SerializePatherListToFile(patchers As List(Of FilePatcher), filename As String, provider As IFileSystem)
         Dim jsons As List(Of FilePatcherJson) = patchers.Select(Function(x) x.SerializableInfo).Distinct.ToList
         Json.SerializeToFile(filename, jsons, provider)
     End Sub
@@ -36,7 +37,7 @@ Public Class FilePatcher
             item.CopyToolsToDirectory(patchersDir)
             currentPatchers.Add(item)
         Next
-        SerializePatherListToFile(currentPatchers, patchersFile, New PhysicalIOProvider)
+        SerializePatherListToFile(currentPatchers, patchersFile, New PhysicalFileSystem)
 
         'Cleanup
         Directory.Delete(tempDirectory, True)

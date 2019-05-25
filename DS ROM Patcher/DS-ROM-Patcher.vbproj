@@ -74,17 +74,23 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNet3dsToolkit, Version=0.0.0.86, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNet3dsToolkit.1.5.1-v1-legacy.2\lib\net462\DotNet3dsToolkit.dll</HintPath>
+    <Reference Include="DotNet3dsToolkit, Version=0.0.0.118, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNet3dsToolkit.1.5.1-v1-legacy.3\lib\net462\DotNet3dsToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetNdsToolkit, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DotNetNdsToolkit.2.0.1\lib\net462\DotNetNdsToolkit.dll</HintPath>
+    <Reference Include="DotNetNdsToolkit, Version=2.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetNdsToolkit.2.0.4\lib\net462\DotNetNdsToolkit.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="SkyEditor.Core, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SkyEditor.Core.4.2.4\lib\net462\SkyEditor.Core.dll</HintPath>
+      <HintPath>..\packages\SkyEditor.Core.4.2.10\lib\net462\SkyEditor.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SkyEditor.IO, Version=5.0.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkyEditor.IO.5.0.8\lib\net462\SkyEditor.IO.dll</HintPath>
+    </Reference>
+    <Reference Include="SkyEditor.Utilities.AsyncFor, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkyEditor.Utilities.AsyncFor.5.0.0\lib\netstandard2.0\SkyEditor.Utilities.AsyncFor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

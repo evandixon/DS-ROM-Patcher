@@ -1,6 +1,7 @@
 ﻿Imports System.IO
 Imports System.Text.RegularExpressions
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.Utilities.AsyncFor
 
 Public Class NDSand3DSCore
     Inherits PatcherCore
@@ -14,7 +15,7 @@ Public Class NDSand3DSCore
     End Sub
 
     Public Overrides Async Function RunPatch(modpackDirectory As String, tempDirectory As String, patchers As List(Of FilePatcher), modpack As ModpackInfo, mods As IEnumerable(Of ModFile), Optional destinationPath As String = Nothing) As Task
-        Dim args = Environment.GetCommandLineArgs        
+        Dim args = Environment.GetCommandLineArgs
         Dim toolsDir = Path.Combine(modpackDirectory, "Tools")
         Dim patchersDir = Path.Combine(toolsDir, "Patchers")
         Dim ROMDirectory = Path.Combine(tempDirectory, "dstemp")

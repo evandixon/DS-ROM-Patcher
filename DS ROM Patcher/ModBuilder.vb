@@ -5,6 +5,8 @@ Imports System.Text.RegularExpressions
 Imports DS_ROM_Patcher.Utilities
 Imports SkyEditor.Core.IO
 Imports SkyEditor.Core.Utilities
+Imports SkyEditor.IO.FileSystem
+Imports SkyEditor.Utilities.AsyncFor
 
 Public Class ModBuilder
     Implements IReportProgress
@@ -132,7 +134,7 @@ Public Class ModBuilder
     End Function
 
     ''' <remarks>If this is overridden, do custom work, THEN use MyBase.Build</remarks>
-    Public Async Function BuildMod(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IIOProvider) As Task
+    Public Async Function BuildMod(originalDirectory As String, modifiedDirectory As String, outputModFilename As String, provider As IFileSystem) As Task
         IsBuildComplete = False
 
         Dim modTempFiles = Path.Combine(ModTempDir, "Files")
@@ -391,7 +393,7 @@ Public Class ModBuilder
     Public Shared Function GetModpackInfo(modpackDirectory As String) As ModpackInfo
         Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
         If File.Exists(modpackInfoFilename) Then
-            Return Json.DeserializeFromFile(Of ModpackInfo)(modpackInfoFilename, New PhysicalIOProvider)
+            Return Json.DeserializeFromFile(Of ModpackInfo)(modpackInfoFilename, New PhysicalFileSystem)
         Else
             Return New ModpackInfo
         End If
@@ -399,6 +401,6 @@ Public Class ModBuilder
 
     Public Shared Sub SaveModpackInfo(modpackDirectory As String, info As ModpackInfo)
         Dim modpackInfoFilename = Path.Combine(modpackDirectory, "Mods", "Modpack.json")
-        Json.SerializeToFile(modpackInfoFilename, info, New PhysicalIOProvider)
+        Json.SerializeToFile(modpackInfoFilename, info, New PhysicalFileSystem)
     End Sub
 End Class
