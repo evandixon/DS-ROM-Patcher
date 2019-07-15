@@ -20,10 +20,28 @@
                 End If
                 p.StartInfo.CreateNoWindow = True
                 p.StartInfo.WorkingDirectory = IO.Path.GetDirectoryName(Filename)
-                p.Start()
+
+                Try
+                    p.Start()
+                Catch ex As Exception
+                    Throw New ProcessFailedToStartException(p.StartInfo, ex)
+                End Try
+
                 p.BeginOutputReadLine()
                 Await Task.Run(Sub() p.WaitForExit())
             End Using
         End Function
+
+        Public Class ProcessFailedToStartException
+            Inherits Exception
+
+            Public Sub New(startInfo As ProcessStartInfo, innerException As Exception)
+                MyBase.New($"Process '{startInfo.FileName}{If(Not String.IsNullOrEmpty(startInfo.Arguments), " " & startInfo.Arguments, "")}' failed to start: {innerException.Message}")
+
+                Me.StartInfo = startInfo
+            End Sub
+
+            Public ReadOnly Property StartInfo As ProcessStartInfo
+        End Class
     End Class
 End Namespace
